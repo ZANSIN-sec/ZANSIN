@@ -1,0 +1,17 @@
+mysql:
+  host: "db"
+  port: 3306
+  dbname: "miniquest"
+  user: "miniquest"
+  password: "miniquest"
+redis:
+  host: "redis"
+  port: 6379
+  dbname: 0
+  password: ""
+stamina:
+  recoverytime: 60
+battle:
+  secret: "miniquest"
+  max_level: 99
+

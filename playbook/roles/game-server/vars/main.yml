@@ -1,0 +1,4 @@
+---
+# vars file for team-game
+team_pem_file: "~/.ssh/team.pem"
+team_pub_file: "~/.ssh/team.pub"

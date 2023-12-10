@@ -1,0 +1,15 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "幻ノにじみ明朝";
+  src: url("../font/M-NijimiMincho/幻ノにじみ明朝.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "PixelMplus10";
+  src: url("../font/PixelMplus10-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "PixelMplus12";
+  src: url("../font/PixelMplus12-Regular.ttf") format("truetype");
+}

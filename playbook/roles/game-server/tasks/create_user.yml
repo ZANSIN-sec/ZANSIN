@@ -1,0 +1,56 @@
+---
+# tasks file for team-db
+- name: create user
+  become: yes
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+    shell: /bin/bash
+    create_home: yes
+    groups: root
+    append: yes
+    state: present
+    update_password: on_create
+  with_items:
+  - { name: 'mario', password: 'Passw0rd!23' }
+  - { name: 'link', password: 'Passw0rd!23' }
+  - { name: 'sonic', password: 'Passw0rd!23' }
+  - { name: 'vendor', password: 'Passw0rd!23' }
+  #- { name: 'jenkins', password: 'jenkins' }
+  - { name: 'hardmini', password: 'hardmini' }
+
+- name: Add user ssh keys
+  become: yes
+  authorized_key:
+    user: "{{item.name}}"
+    key: "{{ lookup('file', '{{team_pub_file}}') }}"
+    state: present 
+  with_items: 
+  - { name: 'hardmini' }
+
+- name: create a ssh directory with mario
+  become: yes
+  file: path=/home/mario/.ssh state=directory owner=mario mode=0700
+
+- name: set id_rsa on mario
+  become: yes
+  template:
+    src: id_rsa
+    dest: /home/mario/.ssh/id_rsa
+    owner: mario
+    mode: '0400'
+
+- name: set authorized_keys on mario
+  become: yes
+  template:
+    src: id_rsa.pub
+    dest: /home/mario/.ssh/authorized_keys
+    owner: mario
+    mode: '0600'
+
+- name: change sudoers
+  become: yes
+  template:
+    src: 90-cloud-init-users
+    dest: /etc/sudoers.d/90-cloud-init-users
+    mode: '0440'

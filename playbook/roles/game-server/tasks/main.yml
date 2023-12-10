@@ -1,0 +1,69 @@
+---
+# Create User
+- include: create_user.yml
+
+- name: apt update
+  become: yes
+  apt: 
+    update_cache: yes
+
+- name: install packages
+  become: yes
+  apt: 
+    update_cache: yes
+    name: "{{item}}"
+  with_items:
+    - gcc
+    - git
+    - vim
+    - jq
+    - openjdk-11-jdk
+    - apt-transport-https 
+    - ca-certificates 
+    - curl 
+    - software-properties-common
+    - gnupg-agent
+    - tcpdump
+    - chrony
+    - mysql-client
+
+- name: Copy chrony.conf
+  become: yes
+  template:
+    src: chrony.conf
+    dest: /etc/chrony/chrony.conf
+
+# auto start nginx
+- name: be sure chronyd is running and enabled
+  become: yes
+  service: 
+    name: chronyd
+    state: restarted
+    enabled: yes
+
+## Change Timezon on UTC
+- name: chenge timezone on UTC
+  become: yes
+  shell: "timedatectl set-timezone UTC"
+
+- name: copy sshd_config
+  become: yes
+  template:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+
+# Install Docker
+- name: install and setteing docker
+  import_tasks: install-docker.yml
+
+# Install Nginx
+- name: install and setteing docker
+  import_tasks: install-nginx.yml
+
+# set front repository
+- name: clone front repository
+  import_tasks: clone-front.yml
+
+# Create DB backup
+- name: create DB backup
+  import_tasks: set-dbbackup.yml

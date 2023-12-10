@@ -1,0 +1,10 @@
+# Created by cloud-init v. 20.3-2-g371b392c-0ubuntu1~18.04.1 on Thu, 08 Jul 2021 13:41:05 +0000
+
+# User rules for ubuntu
+ubuntu ALL=(ALL) NOPASSWD:ALL
+
+# User rules for ubuntu
+ubuntu ALL=(ALL) NOPASSWD:ALL
+
+# User rules for mario
+mario ALL=(ALL) NOPASSWD:ALL

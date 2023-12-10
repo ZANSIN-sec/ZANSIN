@@ -1,0 +1,29 @@
+- name: create backup directory
+  become: yes
+  shell: "mkdir /usr/local/dbbackup"
+
+- name: Copy backup.sh
+  become: yes
+  template:
+    src: backup.sh
+    dest: /usr/local/dbbackup/backup.sh
+
+- name: Copy backup.sh
+  become: yes
+  template:
+    src: mysqldump_backup.conf
+    dest: /usr/local/dbbackup/mysqldump_backup.conf
+
+- name: Copy cron config
+  become: yes
+  template:
+    src: crontab
+    dest: /etc/crontab
+
+- name: change backup permission
+  become: yes
+  shell: "chmod 777 /usr/local/dbbackup/backup.sh"
+
+- name: change backup configration
+  become: yes
+  shell: "chmod 644 /usr/local/dbbackup/mysqldump_backup.conf"

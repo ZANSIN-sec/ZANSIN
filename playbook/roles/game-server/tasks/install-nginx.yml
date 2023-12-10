@@ -1,0 +1,25 @@
+- name: install packages
+  become: yes
+  apt: 
+    update_cache: yes
+    name: "{{item}}"
+  with_items:
+    - nginx
+    - apache2-utils
+
+- name: Copy nginx config
+  template:
+    src: nginx-eng.conf
+    dest: /etc/nginx/sites-available/default
+
+- name: Copy .htpasswd config
+  template:
+    src: .htpasswd
+    dest: /etc/nginx/.htpasswd
+
+# auto start nginx
+- name: be sure docker is running and enabled
+  service: 
+    name: nginx
+    state: restarted
+    enabled: yes

@@ -1,0 +1,81 @@
+version: '3'
+services:
+  phpapi:
+    build:
+      context: ./
+      args:
+        - HTTP_PROXY=$HTTP_PROXY
+        - http_proxy=$http_proxy
+        - HTTPS_PROXY=$HTTPS_PROXY
+        - https_proxy=$https_proxy
+        - NO_PROXY=$NO_PROXY
+        - no_proxy=$no_proxy
+    ports:
+      - 8080:80
+    volumes:
+      - ./public:/var/www/html
+      - ./config:/var/www/config
+    links:
+      - db
+      - redis
+
+  apidebug:
+    build: 
+      context: apidebug
+      args:
+        - HTTP_PROXY=$HTTP_PROXY
+        - http_proxy=$http_proxy
+        - HTTPS_PROXY=$HTTPS_PROXY
+        - https_proxy=$https_proxy
+        - NO_PROXY=$NO_PROXY
+        - no_proxy=$no_proxy
+    ports:
+      - "3000:3000"
+    environment:
+      - LOGIN_ADDR1=phpapi
+      - LOGIN_PORT1=80
+      - LOGIN_ADDR2=phpapi
+      - LOGIN_PORT2=80
+      #- LOGIN_ADDR2=perlapi
+      #- LOGIN_PORT2=3000
+      - LOGIN_ADDR3=goapi
+      - LOGIN_PORT3=8080
+      - LOGIN_ADDR4=pythonapi
+      - LOGIN_PORT4=6000
+    privileged: true
+    links:
+      - phpapi
+
+  db:
+    image: mysql:5.7.17
+    ports:
+      - "3306:3306"
+    volumes:
+      - .mysql_data:/var/lib/mysql
+      - ./initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: miniquest
+      MYSQL_USER: miniquest
+      MYSQL_PASSWORD: miniquest
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    links:
+      - db
+    ports:
+      - 5555:80
+    volumes:
+      - /sessions
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ".redis_data:/data"

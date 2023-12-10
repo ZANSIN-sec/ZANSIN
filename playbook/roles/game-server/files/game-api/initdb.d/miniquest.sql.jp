@@ -1,0 +1,379 @@
+use 'miniquest';
+
+-- phpMyAdmin SQL Dump
+-- version 5.0.1
+-- https://www.phpmyadmin.net/
+--
+-- ホスト: localhost
+-- 生成日時: 2020 年 2 月 20 日 08:06
+-- サーバのバージョン： 5.7.29-0ubuntu0.18.04.1
+-- PHP のバージョン: 7.2.24-0ubuntu0.18.04.3
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- データベース: `miniquest`
+--
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `battle_history`
+--
+
+CREATE TABLE `battle_history` (
+                                  `id` int(10) UNSIGNED NOT NULL,
+                                  `user_id` int(11) NOT NULL,
+                                  `enemy_id` int(11) NOT NULL,
+                                  `course_id` int(11) NOT NULL,
+                                  `result` varchar(1024) NOT NULL,
+                                  `turn_count` int(11) NOT NULL,
+                                  `total_damage` int(11) NOT NULL,
+                                  `get_exp` int(11) NOT NULL,
+                                  `get_gold` int(11) NOT NULL,
+                                  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `course`
+--
+
+CREATE TABLE `course` (
+                          `id` int(11) NOT NULL,
+                          `name` varchar(1024) NOT NULL,
+                          `stamina` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- テーブルのデータのダンプ `course`
+--
+
+INSERT INTO `course` (`id`, `name`, `stamina`) VALUES
+(1, 'easy', 10),
+(2, 'normal', 20),
+(3, 'hard', 30),
+(4, 'very hard', 40),
+(5, 'nightmare', 50),
+(6, 'test', 1);
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `enemy`
+--
+
+CREATE TABLE `enemy` (
+                         `id` int(10) UNSIGNED NOT NULL,
+                         `hp` int(11) NOT NULL,
+                         `str` int(11) NOT NULL,
+                         `course_id` int(11) NOT NULL,
+                         `gold` int(11) NOT NULL,
+                         `exp` int(11) NOT NULL,
+                         `name` varchar(1024) NOT NULL,
+                         `image` varchar(1024) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- テーブルのデータのダンプ `enemy`
+--
+
+INSERT INTO `enemy` (`id`, `hp`, `str`, `course_id`, `gold`, `exp`, `name`, `image`) VALUES
+(1, 15, 4, 1, 1, 1, 'ただのスライム', 'enemy001.png'),
+(2, 50, 13, 2, 5, 2, '元気なスライム', 'enemy002.png'),
+(3, 151, 40, 3, 25, 4, 'マッチョなスライム', 'enemy003.png'),
+(4, 503, 133, 4, 125, 8, '恐ろしく強いスライム', 'enemy004.png'),
+(5, 1677, 443, 5, 625, 16, '悪魔のようなスライム', 'enemy005.png'),
+(6, 1, 1, 6, 500, 500, 'テスト用のスライム', 'enemy099.png');
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `equipment`
+--
+
+CREATE TABLE `equipment` (
+                             `id` int(10) UNSIGNED NOT NULL,
+                             `type` varchar(1024) NOT NULL,
+                             `rarity` varchar(1024) NOT NULL,
+                             `name` varchar(1024) NOT NULL,
+                             `param` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- テーブルのデータのダンプ `equipment`
+--
+
+INSERT INTO `equipment` (`id`, `type`, `rarity`, `name`, `param`) VALUES
+(1, 'any', 'init', 'なし', 0),
+(2, 'weapon', 'N', 'ひのきのぼう', 3),
+(3, 'weapon', 'N', '竹刀', 6),
+(4, 'weapon', 'N', 'お土産の木刀', 9),
+(5, 'weapon', 'N', 'いしのおの', 12),
+(6, 'weapon', 'N', '青銅の剣', 15),
+(7, 'weapon', 'N', '鉄の斧', 18),
+(8, 'weapon', 'N', 'レイピア', 21),
+(9, 'weapon', 'N', '鉄のやり', 24),
+(10, 'weapon', 'R', 'はがねの剣', 30),
+(11, 'weapon', 'R', 'モーニングスター', 35),
+(12, 'weapon', 'R', '青龍刀', 40),
+(13, 'weapon', 'R', 'サムライブレード', 45),
+(14, 'weapon', 'R', 'バールのようなもの', 50),
+(15, 'weapon', 'SR', '妖刀マサムネ', 70),
+(16, 'weapon', 'SR', '伝説の聖剣', 80),
+(17, 'armor', 'N', 'ぬののふく', 3),
+(18, 'armor', 'N', 'ステテコパンツ', 6),
+(19, 'armor', 'N', '皮のよろい', 9),
+(20, 'armor', 'N', '海賊の服', 12),
+(21, 'armor', 'N', 'くさびかたびら', 15),
+(22, 'armor', 'N', '青銅の鎧', 18),
+(23, 'armor', 'N', '防弾チョッキ', 21),
+(24, 'armor', 'N', '鉄の胸当て', 24),
+(25, 'armor', 'R', 'はがねの鎧', 30),
+(26, 'armor', 'R', 'ゴールドアーマー', 35),
+(27, 'armor', 'R', 'しのびのころも', 40),
+(28, 'armor', 'R', 'さまようよろい', 45),
+(29, 'armor', 'R', '武者のよろい', 50),
+(30, 'armor', 'SR', '賢者のローブ', 70),
+(31, 'armor', 'SR', '伝説のよろい', 80);
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `level`
+--
+
+CREATE TABLE `level` (
+                         `level` int(10) UNSIGNED NOT NULL,
+                         `max_hp` int(11) NOT NULL,
+                         `max_str` int(11) NOT NULL,
+                         `max_stamina` int(11) NOT NULL,
+                         `need_exp` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- テーブルのデータのダンプ `level`
+--
+
+INSERT INTO `level` (`level`, `max_hp`, `max_str`, `max_stamina`, `need_exp`) VALUES
+(1, 15, 5, 10, 2),
+(2, 17, 6, 12, 2),
+(3, 19, 7, 13, 2),
+(4, 21, 8, 15, 2),
+(5, 23, 9, 16, 2),
+(6, 25, 10, 18, 3),
+(7, 27, 11, 19, 3),
+(8, 29, 12, 21, 3),
+(9, 31, 13, 22, 3),
+(10, 33, 14, 24, 3),
+(11, 35, 15, 25, 3),
+(12, 37, 16, 27, 3),
+(13, 39, 17, 28, 4),
+(14, 41, 18, 30, 4),
+(15, 43, 19, 31, 4),
+(16, 45, 20, 33, 4),
+(17, 47, 21, 34, 4),
+(18, 49, 22, 36, 5),
+(19, 51, 23, 37, 5),
+(20, 53, 24, 39, 5),
+(21, 55, 25, 40, 5),
+(22, 57, 26, 42, 6),
+(23, 59, 27, 43, 6),
+(24, 61, 28, 45, 6),
+(25, 63, 29, 46, 6),
+(26, 65, 30, 48, 7),
+(27, 67, 31, 49, 7),
+(28, 69, 32, 51, 7),
+(29, 71, 33, 52, 8),
+(30, 73, 34, 54, 8),
+(31, 75, 35, 55, 9),
+(32, 77, 36, 57, 9),
+(33, 79, 37, 58, 10),
+(34, 81, 38, 60, 10),
+(35, 83, 39, 61, 11),
+(36, 85, 40, 63, 11),
+(37, 87, 41, 64, 12),
+(38, 89, 42, 66, 12),
+(39, 91, 43, 67, 13),
+(40, 93, 44, 69, 13),
+(41, 95, 45, 70, 14),
+(42, 97, 46, 72, 15),
+(43, 99, 47, 73, 16),
+(44, 101, 48, 75, 16),
+(45, 103, 49, 76, 17),
+(46, 105, 50, 78, 18),
+(47, 107, 51, 79, 19),
+(48, 109, 52, 81, 20),
+(49, 111, 53, 82, 21),
+(50, 113, 54, 84, 22),
+(51, 115, 55, 85, 23),
+(52, 117, 56, 87, 24),
+(53, 119, 57, 88, 25),
+(54, 121, 58, 90, 27),
+(55, 123, 59, 91, 28),
+(56, 125, 60, 93, 29),
+(57, 127, 61, 94, 31),
+(58, 129, 62, 96, 32),
+(59, 131, 63, 97, 34),
+(60, 133, 64, 99, 36),
+(61, 135, 65, 100, 37),
+(62, 137, 66, 102, 39),
+(63, 139, 67, 103, 41),
+(64, 141, 68, 105, 43),
+(65, 143, 69, 106, 45),
+(66, 145, 70, 108, 48),
+(67, 147, 71, 109, 50),
+(68, 149, 72, 111, 53),
+(69, 151, 73, 112, 55),
+(70, 153, 74, 114, 58),
+(71, 155, 75, 115, 61),
+(72, 157, 76, 117, 64),
+(73, 159, 77, 118, 67),
+(74, 161, 78, 120, 70),
+(75, 163, 79, 121, 74),
+(76, 165, 80, 123, 78),
+(77, 167, 81, 124, 82),
+(78, 169, 82, 126, 86),
+(79, 171, 83, 127, 90),
+(80, 173, 84, 129, 94),
+(81, 175, 85, 130, 99),
+(82, 177, 86, 132, 104),
+(83, 179, 87, 133, 109),
+(84, 181, 88, 135, 115),
+(85, 183, 89, 136, 120),
+(86, 185, 90, 138, 127),
+(87, 187, 91, 139, 133),
+(88, 189, 92, 141, 139),
+(89, 191, 93, 142, 146),
+(90, 193, 94, 144, 154),
+(91, 195, 95, 145, 161),
+(92, 197, 96, 147, 170),
+(93, 199, 97, 148, 178),
+(94, 201, 98, 150, 187),
+(95, 203, 99, 151, 196),
+(96, 205, 100, 153, 206),
+(97, 207, 101, 154, 216),
+(98, 209, 102, 156, 227),
+(99, 211, 103, 157, 239);
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `player`
+--
+
+CREATE TABLE `player` (
+                          `id` int(10) UNSIGNED NOT NULL,
+                          `user_name` varchar(1024) NOT NULL,
+                          `password` varchar(1024) NOT NULL,
+                          `nick_name` varchar(1024) NOT NULL,
+                          `image` varchar(1024) NOT NULL,
+                          `level` int(11) NOT NULL,
+                          `stamina` int(11) NOT NULL,
+                          `weapon_id` int(11) NOT NULL,
+                          `armor_id` int(11) NOT NULL,
+                          `gold` int(11) NOT NULL,
+                          `exp` int(11) NOT NULL,
+                          `created_at` datetime NOT NULL,
+                          `staminaupdated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- テーブルのデータのダンプ `player`
+--
+
+
+--
+-- ダンプしたテーブルのインデックス
+--
+
+--
+-- テーブルのインデックス `battle_history`
+--
+ALTER TABLE `battle_history`
+    ADD PRIMARY KEY (`id`);
+
+--
+-- テーブルのインデックス `course`
+--
+ALTER TABLE `course`
+    ADD PRIMARY KEY (`id`);
+
+--
+-- テーブルのインデックス `enemy`
+--
+ALTER TABLE `enemy`
+    ADD PRIMARY KEY (`id`);
+
+--
+-- テーブルのインデックス `equipment`
+--
+ALTER TABLE `equipment`
+    ADD PRIMARY KEY (`id`);
+
+--
+-- テーブルのインデックス `level`
+--
+ALTER TABLE `level`
+    ADD PRIMARY KEY (`level`);
+
+--
+-- テーブルのインデックス `player`
+--
+ALTER TABLE `player`
+    ADD PRIMARY KEY (`id`);
+
+--
+-- ダンプしたテーブルのAUTO_INCREMENT
+--
+
+--
+-- テーブルのAUTO_INCREMENT `battle_history`
+--
+ALTER TABLE `battle_history`
+    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- テーブルのAUTO_INCREMENT `course`
+--
+ALTER TABLE `course`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+
+--
+-- テーブルのAUTO_INCREMENT `enemy`
+--
+ALTER TABLE `enemy`
+    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- テーブルのAUTO_INCREMENT `equipment`
+--
+ALTER TABLE `equipment`
+    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- テーブルのAUTO_INCREMENT `level`
+--
+ALTER TABLE `level`
+    MODIFY `level` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+
+--
+-- テーブルのAUTO_INCREMENT `player`
+--
+ALTER TABLE `player`
+    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
