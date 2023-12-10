@@ -59,6 +59,13 @@ $ ansible-playbook -i inventory.ini game-servers.yml -K
 
 The user connecting must have the permissions to execute sudo, and please enter their password.
 
+```mermaid
+  graph LR
+    A[Ansible Control Node] -- Ansible connection --> B[game-server]
+    A -- Ansible connection --> C[game-server]
+    A -- Ansible connection --> D[game-server]
+```
+
 ## Cite This Work
 
 Details on how to cite DOJO in your academic and professional works will be provided
