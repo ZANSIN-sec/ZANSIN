@@ -1,6 +1,6 @@
 ---
 # Create User
-- include: create_user.yml
+- import_tasks: create_user.yml
 
 - name: apt update
   become: yes
