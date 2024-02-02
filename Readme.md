@@ -16,23 +16,50 @@ making it a comprehensive and evolving platform for cybersecurity education.
 
 ### Pre-Requisites
 
-- `Ubuntu20.04+`
-- Other requirements are still being determined.
+Before you begin, ensure you have access to a Linux server meeting the following criteria:
 
-## Example Notebooks
+- Operating System: `Ubuntu 20.04+`. Other Linux distributions' compatibility is currently under evaluation.
+- Sufficient privileges to execute system commands and make network configurations.
 
-A curated selection of example notebooks will be available to help users get started
-with ZANSIN. Details about accessing and using these notebooks will be provided soon.
+### User Creation and Setup
 
-Please write down the IP address or hostname of the Ubuntu 20.04+ host, on which you want to set up the game environment, in the [game-server] section of the inventory.ini file under the playbook.
+First, login to remote servers.
+Create a new user named `hardmini` with a home directory and bash as the default shell:
 
-And, create a pair of private and public keys in /home/user/.ssh/, and name the private key `team.pem` and the public key `team.pub`.
-
+```bash
+useradd useradd -m -s /bin/bash hardmini
+usermod -aG sudo hardmini
 ```
-$ git clon https://github.com/zansin-sec/zansin.git
-$ cd zanshin/playbook
-$ ansible-playbook -i inventory.ini game-servers.yml -K
+
+### SSH Key Pair Generation
+
+And, create a pair of private and public keys in /home/hardmini/.ssh/, and name the private key `team.pem` and the public key `team.pub`.
+
+```bash
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/team
+mv ~/.ssh/team ~/.ssh/team.pem
+mv ~/.ssh/team.pub ~/.ssh/team.pub
 ```
+
+###  Clone the repository
+
+Be back to local computer and clone the repository and navigate to the playbook directory to execute the Ansible playbook
+
+```bash
+git clone https://github.com/zanshin-sec/zanshin.git
+cd zanshin/playbook
+```
+
+### Configure Ansible Inventory
+
+Document the IP address or hostname of the Ubuntu 20.04+ host intended for the game environment setup. '
+Update the `inventory.ini` file located in the playbook directory, specifically under the [game-servers] section with the host details.
+
+```bash
+ansible-playbook -i inventory.ini game-servers.yml -K
+```
+
+## Components
 
 The user connecting must have the permissions to execute sudo, and please enter their password.
 
