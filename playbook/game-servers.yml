@@ -1,16 +1,26 @@
 ---
 - name: Configure game server
-  hosts: all
+  hosts: game-servers
   become: yes
-  remote_user: hardmini
   gather_facts: True
-
+  remote_user: hardmini
   vars:
     hostname: game-server
     ansible_ssh_private_key_file: ~/.ssh/team.pem
     ansible_ssh_public_key_file: ~/.ssh/team.pub
     ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
-
   roles:
-   - game-server
+    - game-server
 
+- name: Setup red server
+  hosts: red-servers
+  become: yes
+  gather_facts: True
+  remote_user: hardmini
+  vars:
+    hostname: red-server
+    ansible_ssh_private_key_file: ~/.ssh/team.pem
+    ansible_ssh_public_key_file: ~/.ssh/team.pub
+    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+  roles:
+    - red-server
