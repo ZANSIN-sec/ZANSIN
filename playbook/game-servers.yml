@@ -1,26 +1,37 @@
 ---
 - name: Configure game server
   hosts: game-servers
-  become: yes
   gather_facts: True
-  remote_user: hardmini
+  remote_user: zansin
+  become: yes
   vars:
     hostname: game-server
-    ansible_ssh_private_key_file: ~/.ssh/team.pem
-    ansible_ssh_public_key_file: ~/.ssh/team.pub
-    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+    ansible_ssh_user: zansin
+    ansible_ssh_pass: Passw0rd!
+    ansible_become_password: Passw0rd!  # 追加
   roles:
-    - game-server
+    - name: game-server
+      # Add import statement for game-server role
+      import_role:
+        name: game-server
 
 - name: Setup red server
+  become: yes
+  become_user: root
+  vars:
+    ansible_become_password: Passw0rd!
   hosts: red-servers
   become: yes
   gather_facts: True
-  remote_user: hardmini
+  remote_user: zansin
   vars:
     hostname: red-server
-    ansible_ssh_private_key_file: ~/.ssh/team.pem
-    ansible_ssh_public_key_file: ~/.ssh/team.pub
-    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+    ansible_ssh_user: zansin
+    ansible_ssh_pass: Passw0rd!
+    ansible_become_password: Passw0rd!  # 追加
   roles:
-    - red-server
+    - name: red-server
+      # Add import statement for red-server role
+      import_role:
+        name: red-server
+      tags: red-server

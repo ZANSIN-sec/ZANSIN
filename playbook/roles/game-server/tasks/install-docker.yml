@@ -1,18 +1,14 @@
 - name: Add docker GPG key
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
-  
+
 - name: Add apt repository
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
 
-#- name: Add apt repository
-#  apt_repository:
-#    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  
 - name: apt update
   become: yes
-  apt: 
+  apt:
     update_cache: yes
 
 - name: Install Docker packages
@@ -21,17 +17,15 @@
     state: present
   vars:
     packages:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
+      - docker.io
 
 ## Enable specified regular users to use Docker without sudo.
 - name: add ubuntu to dcoker group
-  shell: "sudo gpasswd -a vendor docker" 
+  shell: "sudo gpasswd -a vendor docker"
 
 # Make it possible for regular users to read the sockets used by Docker.
 - name: chmod /var/run/docker.sock
-  shell: "sudo chmod 666 /var/run/docker.sock" 
+  shell: "sudo chmod 666 /var/run/docker.sock"
 
 - name: copy docker.service
   become: yes
@@ -40,16 +34,16 @@
     dest: /lib/systemd/system/docker.service
 
 - name: be sure docker is running and enabled
-  service: 
+  service:
     name: docker
     state: restarted
     enabled: yes
-  
+
 - name: Install docker-compose
   get_url:
-    url: "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
-    dest: /usr/local/bin/docker-compose
-    mode: +x
+    url: "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64"
+    dest: "/usr/local/bin/docker-compose"
+    mode: '0755'
 
 # Granting Execute Permissions
 - name: chmod docker-compose
