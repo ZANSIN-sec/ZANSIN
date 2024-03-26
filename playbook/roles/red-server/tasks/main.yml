@@ -1,9 +1,2 @@
 ---
 
-- name: install packages
-  become: yes
-  apt:
-    update_cache: yes
-    name: "{{item}}"
-  with_items:
-    - sshpass
