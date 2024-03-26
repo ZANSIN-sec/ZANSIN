@@ -1,4 +1,3 @@
 requires 'Mojolicious';
-requires 'DBD::mysql';
 requires 'Redis::Fast';
 

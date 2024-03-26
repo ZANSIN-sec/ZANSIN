@@ -3,13 +3,6 @@ services:
   phpapi:
     build:
       context: ./
-      args:
-        - HTTP_PROXY=$HTTP_PROXY
-        - http_proxy=$http_proxy
-        - HTTPS_PROXY=$HTTPS_PROXY
-        - https_proxy=$https_proxy
-        - NO_PROXY=$NO_PROXY
-        - no_proxy=$no_proxy
     ports:
       - 8080:80
     volumes:
@@ -36,8 +29,6 @@ services:
       - LOGIN_PORT1=80
       - LOGIN_ADDR2=phpapi
       - LOGIN_PORT2=80
-      #- LOGIN_ADDR2=perlapi
-      #- LOGIN_PORT2=3000
       - LOGIN_ADDR3=goapi
       - LOGIN_PORT3=8080
       - LOGIN_ADDR4=pythonapi

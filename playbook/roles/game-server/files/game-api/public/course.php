@@ -194,7 +194,7 @@ if($_SERVER["REQUEST_METHOD"] === "GET"){
     $enemy_info = $stmt->fetch(PDO::FETCH_ASSOC);
     #### promise to order of output for json. if forget the this step, so may will be change the hmac value for each time. ####
     ksort($enemy_info);
-    $einfo_json = json_encode($player_info);
+    $einfo_json = json_encode($enemy_info);
 
     // add hmac for prevent falsification
     $cksum = hash_hmac('sha1', $einfo_json, $hmac_secret);
