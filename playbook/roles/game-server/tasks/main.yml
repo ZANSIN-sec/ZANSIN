@@ -26,6 +26,7 @@
     - tcpdump
     - chrony
     - mysql-client
+    - sshpass
 
 - name: Copy chrony.conf
   become: yes

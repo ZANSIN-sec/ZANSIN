@@ -1,8 +1,23 @@
 ---
-- name: Create an empty text file in /tmp
-  file:
-    path: "/tmp/testfile.txt"
-    state: touch
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0644'
+- name: create user
+  become: yes
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+    shell: /bin/bash
+    create_home: yes
+    groups: root
+    append: yes
+    state: present
+    update_password: on_create
+  with_items:
+    - { name: 'vendor', password: 'Passw0rd!23' }
+
+
+- name: install packages
+  become: yes
+  apt:
+    update_cache: yes
+    name: "{{item}}"
+  with_items:
+    - sshpass
