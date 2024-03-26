@@ -2,7 +2,7 @@
 use Mojolicious::Lite;
 use JSON::PP;
 use Time::Piece;
-use DBD::mysql;
+# use DBD::mysql;
 use Redis::Fast;
 use Data::Dumper;
 use Carp qw/carp confess/;
