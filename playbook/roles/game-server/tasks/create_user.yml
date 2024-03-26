@@ -19,14 +19,14 @@
   #- { name: 'jenkins', password: 'jenkins' }
   - { name: 'hardmini', password: 'hardmini' }
 
-- name: Add user ssh keys
-  become: yes
-  authorized_key:
-    user: "{{item.name}}"
-    key: "{{ lookup('file', '{{team_pub_file}}') }}"
-    state: present 
-  with_items: 
-  - { name: 'hardmini' }
+# - name: Add user ssh keys
+#   become: yes
+#   authorized_key:
+#     user: "{{item.name}}"
+#     key: "{{ lookup('file', '{{team_pub_file}}') }}"
+#     state: present
+#   with_items:
+#   - { name: 'hardmini' }
 
 - name: create a ssh directory with mario
   become: yes

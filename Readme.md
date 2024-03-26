@@ -20,6 +20,7 @@ Before you begin, ensure you have access to a Linux server meeting the following
 
 - Operating System: `Ubuntu 20.04+`. Other Linux distributions' compatibility is currently under evaluation.
 - Sufficient privileges to execute system commands and make network configurations.
+- SSH service installed on both servers
 
 ### User Creation and Setup
 
@@ -27,11 +28,13 @@ First, login to remote servers.
 Create a new user named `hardmini` with a home directory and bash as the default shell:
 
 ```bash
-useradd -m -s /bin/bash hardmini
-usermod -aG sudo hardmini
+sudo useradd zansin
+sudo usermod -aG sudo zansin
+echo "zansin:Passw0rd!" | sudo chpasswd
+sudo apt install ansible
 ```
 
-### SSH Key Pair Generation
+<!-- ### SSH Key Pair Generation
 
 And, create a pair of private and public keys in /home/hardmini/.ssh/, and name the private key `team.pem` and the public key `team.pub`.
 
@@ -43,23 +46,32 @@ mv ~/.ssh/team ~/.ssh/team.pem
 Copy the Public Key to Your Remote Server:
 
 Use the ssh-copy-id command to add your public key (team.pub) to the authorized_keys
-file of the hardmini user on the remote server. Replace your_remote_host with the actual 
+file of the hardmini user on the remote server. Replace your_remote_host with the actual
 hostname or IP address of your server.
 
 Example:
 
 ```bash
 cat ~/.ssh/team.pub | ssh hardmini@your_remote_host 'mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys'
-```
+``` -->
 
 ###  Clone the repository
 
 Be back to local computer and clone the repository and navigate to the playbook directory to execute the Ansible playbook
 
 ```bash
-git clone https://github.com/zanshin-sec/zanshin.git
+git clone https://github.com/zansin-sec/zansin.git
 cd zanshin/playbook
 ```
+
+### Setup Attack Server
+
+``` bash
+sudo useradd zansin
+sudo usermod -aG sudo zansin
+echo "zansin:Passw0rd!" | sudo chpasswd
+```
+
 
 ### Configure Ansible Inventory
 
