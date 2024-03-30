@@ -31,7 +31,7 @@ Create a new user named `hardmini` with a home directory and bash as the default
 sudo useradd zansin
 sudo usermod -aG sudo zansin
 echo "zansin:Passw0rd!" | sudo chpasswd
-sudo apt install sshpass
+sudo apt install ansible
 ```
 
 <!-- ### SSH Key Pair Generation

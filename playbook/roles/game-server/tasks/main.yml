@@ -27,20 +27,6 @@
     - chrony
     - mysql-client
 
-- name: Copy chrony.conf
-  become: yes
-  template:
-    src: chrony.conf
-    dest: /etc/chrony/chrony.conf
-
-# auto start nginx
-- name: be sure chronyd is running and enabled
-  become: yes
-  service: 
-    name: chronyd
-    state: restarted
-    enabled: yes
-
 ## Change Timezon on UTC
 - name: chenge timezone on UTC
   become: yes
