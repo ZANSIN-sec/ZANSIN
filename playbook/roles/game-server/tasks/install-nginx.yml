@@ -12,11 +12,6 @@
     src: default.conf
     dest: /etc/nginx/sites-available/default
 
-- name: Copy .htpasswd config
-  template:
-    src: .htpasswd
-    dest: /etc/nginx/.htpasswd
-
 # auto start nginx
 - name: be sure docker is running and enabled
   service: 
