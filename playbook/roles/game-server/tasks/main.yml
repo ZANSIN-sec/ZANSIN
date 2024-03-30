@@ -17,7 +17,6 @@
     - git
     - vim
     - jq
-    - openjdk-11-jdk
     - apt-transport-https 
     - ca-certificates 
     - curl 

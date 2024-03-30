@@ -16,27 +16,6 @@
   - { name: 'link', password: 'Passw0rd!23' }
   - { name: 'sonic', password: 'Passw0rd!23' }
   - { name: 'vendor', password: 'Passw0rd!23' }
-  - { name: 'hardmini', password: 'hardmini' }
-
-- name: create a ssh directory with mario
-  become: yes
-  file: path=/home/mario/.ssh state=directory owner=mario mode=0700
-
-- name: set id_rsa on mario
-  become: yes
-  template:
-    src: id_rsa
-    dest: /home/mario/.ssh/id_rsa
-    owner: mario
-    mode: '0400'
-
-- name: set authorized_keys on mario
-  become: yes
-  template:
-    src: id_rsa.pub
-    dest: /home/mario/.ssh/authorized_keys
-    owner: mario
-    mode: '0600'
 
 - name: change sudoers
   become: yes
