@@ -34,9 +34,10 @@
     dest: /lib/systemd/system/docker.service
 
 - name: be sure docker is running and enabled
-  service:
+  systemd:
     name: docker
     state: restarted
+    daemon_reload: yes
     enabled: yes
 
 - name: Install docker-compose

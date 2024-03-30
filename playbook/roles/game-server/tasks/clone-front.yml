@@ -1,15 +1,3 @@
-#- name: clone front repository
-#  become: yes
-#  shell: "{{ item }}"
-#  with_items:
-#    - "git clone https://{{ lookup('env', 'github_user') }}:{{ lookup('env', 'github_pat') }}@github.com/minihardening/mini4-front.git && cd mini4-front && rm -rf .git && sudo cp -rf ./* /var/www/html/"
-
-#- name: clone game-api repository
-#  become: yes
-#  shell: "{{ item }}"
-#  with_items:
-#    - "git clone https://{{ lookup('env', 'github_user') }}:{{ lookup('env', 'github_pat') }}@github.com/minihardening/mini4-game-api-php.git && rm -rf mini4-game-api-php/.git && sudo mv mini4-game-api-php /home/vendor/mini4-game-api-php"
-#    - "sudo chown -R vendor:vendor /home/vendor && sudo chmod 777 /home/vendor/mini4-game-api-php/public/images/players"
 
 - name: Copy front files
   ansible.builtin.copy:
@@ -25,3 +13,10 @@
     owner: vendor
     group: vendor
     mode: '0755'
+
+- name: Permission settings for the upload directory
+  file:
+    path: /home/vendor/game-api/public/images/players
+    owner: vendor
+    group: vendor
+    mode: 0777
