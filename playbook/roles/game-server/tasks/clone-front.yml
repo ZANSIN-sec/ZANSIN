@@ -13,3 +13,10 @@
     owner: vendor
     group: vendor
     mode: '0755'
+
+- name: Permission settings for the upload directory
+  file:
+    path: /home/vendor/game-api/public/images/players
+    owner: vendor
+    group: vendor
+    mode: 0777
