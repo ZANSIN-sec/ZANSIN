@@ -2,8 +2,6 @@
 use Mojolicious::Lite;
 use JSON::PP;
 use Time::Piece;
-# use DBD::mysql;
-use Redis::Fast;
 use Data::Dumper;
 use Carp qw/carp confess/;
 
@@ -14,15 +12,6 @@ my $session_name     = "session_id";
 my $lobby_host1 = $ENV{LOGIN_ADDR1} || "127.0.0.1";
 my $lobby_port1 = $ENV{LOGIN_PORT1} || '8080';
 
-# perl
-my $lobby_host2 = $ENV{LOGIN_ADDR2} || "127.0.0.1";
-my $lobby_port2 = $ENV{LOGIN_PORT2} || '8081';
-
-# go
-my $lobby_host3 = $ENV{LOGIN_ADDR3} || "127.0.0.1";
-my $lobby_port3 = $ENV{LOGIN_PORT3} || '8082';
-
-
 app->config(
   hypnotoad => {
     listen => ['http://*:3000'],
@@ -32,16 +21,11 @@ app->config(
 
 get '/' => sub {
   my $c = shift;
-  #warn $c->dumper($c);
   # get cookie
   my $sid = get_sid($c);
-  #warn $sid;
-  #warn get_cookie_value($c, "session_id");
   $c->stash('sid' => $sid);
   $c->render(template => 'index');
 };
-
-# phpapi
 
 get '/new_user' => sub {
   # for debug
@@ -98,15 +82,12 @@ get '/delete_user' => sub {
   $c->render(json => decode_json($res));
 };
 
-# perlapi
-
 get '/courseget' => sub {
   # for debug
   my $c = shift;
   my $sid = get_sid($c);
-  #my $cmd = 'curl -v -H "Content-Type: application/json" -b \'session_id=%s\' http://%s:%d/course';
   my $cmd = 'curl -s -H "Content-Type: application/json" -b \'session_id=%s\' http://%s:%d/course.php';
-  $cmd = sprintf($cmd, $sid, $lobby_host2, $lobby_port2);
+  $cmd = sprintf($cmd, $sid, $lobby_host1, $lobby_port1);
   warn $cmd;
   my $res = `$cmd`;
   $c->render(json => decode_json($res));
@@ -117,12 +98,9 @@ get '/coursepost' => sub {
   my $c = shift;
   my $sid = get_sid($c);
   my $course_id = $c->param('course_id');
-  #my $cmd = 'curl -v -H "Content-Type: application/json" -b \'session_id=%s\' -d \'{"id":%s}\' http://%s:%d/course';
   my $cmd = 'curl -s -X POST -H "Content-Type: application/json" -b \'session_id=%s\' -d \'{"id":%s}\' http://%s:%d/course.php';
-  $cmd = sprintf($cmd, $sid, $course_id, $lobby_host2, $lobby_port2);
-  #$cmd = sprintf($cmd, $sid, $course_id, $lobby_host2);
+  $cmd = sprintf($cmd, $sid, $course_id, $lobby_host1, $lobby_port1);
   my $res = `$cmd`;
-  #$c->render(json => decode_json($res));
   $c->render(text => $res);
 };
 
@@ -132,28 +110,21 @@ post '/battle' => sub {
   my $sid = get_sid($c);
   my $req_json = $c->req->json;
   my $data = json_canonical_encode($req_json); 
-  #my $cmd = 'curl -v -X POST -H "Content-Type: application/json" -b \'session_id=%s\' -d \'%s\' http://%s:%d/battle';
   my $cmd = 'curl -s -X POST -H "Content-Type: application/json" -b \'session_id=%s\' -d \'%s\' http://%s:%d/battle.php';
-  $cmd = sprintf($cmd, $sid, $data, $lobby_host2, $lobby_port2);
+  $cmd = sprintf($cmd, $sid, $data, $lobby_host1, $lobby_port1);
   my $res = `$cmd`;
-  #$c->render(json => decode_json($res));
   $c->render(text => $res);
 };
-
-# goapi
 
 get '/recovery' => sub {
   # for debug
   my $c = shift;
   my $sid = get_sid($c);
   my $price  = $c->param('price');
-  #my $cmd = 'curl -s -X POST -H "Content-Type: application/json" -b \'session_id=%s\' -d \'{"price":%s}\' http://%s:%d/api/recovery';
   my $cmd = 'curl -s -X POST -H "Content-Type: application/json" -b \'session_id=%s\' -d \'{"price":%s}\' http://%s:%d/recovery.php';
-  #$cmd = sprintf($cmd, $sid, $price, $lobby_host3, $lobby_port3);
-  $cmd = sprintf($cmd, $sid, $price, $lobby_host2, $lobby_port2);
+  $cmd = sprintf($cmd, $sid, $price, $lobby_host1, $lobby_port1);
   warn $cmd;
   my $res = `$cmd`;
-  #$c->render(json => decode_json($res));
   $c->render(text => $res);
 };
 
@@ -162,16 +133,11 @@ get '/gatya' => sub {
   my $c = shift;
   my $sid = get_sid($c);
   my $gold  = $c->param('gold');
-  #my $cmd = 'curl -s -X POST -H "Content-Type: application/json" -b \'session_id=%s\' -d \'{"gold":%s}\' http://%s:%d/api/gatya';
   my $cmd = 'curl -s -X POST -H "Content-Type: application/json" -b \'session_id=%s\' -d \'{"gold":%s}\' http://%s:%d/gacha.php';
-  #$cmd = sprintf($cmd, $sid, $gold, $lobby_host3, $lobby_port3);
-  $cmd = sprintf($cmd, $sid, $gold, $lobby_host2, $lobby_port2);
+  $cmd = sprintf($cmd, $sid, $gold, $lobby_host1, $lobby_port1);
   my $res = `$cmd`;
-  #$c->render(json => decode_json($res));
   $c->render(text => $res);
 };
-
-# pythonapi -> PHP
 
 get '/player' => sub {
   # for debug

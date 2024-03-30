@@ -15,24 +15,11 @@ services:
   apidebug:
     build: 
       context: apidebug
-      args:
-        - HTTP_PROXY=$HTTP_PROXY
-        - http_proxy=$http_proxy
-        - HTTPS_PROXY=$HTTPS_PROXY
-        - https_proxy=$https_proxy
-        - NO_PROXY=$NO_PROXY
-        - no_proxy=$no_proxy
     ports:
       - "3000:3000"
     environment:
       - LOGIN_ADDR1=phpapi
       - LOGIN_PORT1=80
-      - LOGIN_ADDR2=phpapi
-      - LOGIN_PORT2=80
-      - LOGIN_ADDR3=goapi
-      - LOGIN_PORT3=8080
-      - LOGIN_ADDR4=pythonapi
-      - LOGIN_PORT4=6000
     privileged: true
     links:
       - phpapi

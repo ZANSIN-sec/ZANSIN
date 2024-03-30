@@ -1,3 +1,2 @@
 requires 'Mojolicious';
-requires 'Redis::Fast';
 
