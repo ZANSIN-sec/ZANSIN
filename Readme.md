@@ -1,31 +1,27 @@
+![ZANSIN](./images/F317526F1119930E21EC0A70B21E8A0F892AF67B.png)
+
 ZANSIN
 =================
+
 ![Ansible](https://img.shields.io/badge/-Ansible-EE0000.svg?logo=ansible&style=flat")
 
-ZANSIN is envisioned as a GROUNDBREAKING cybersecurity training tool designed to equip users against
-the ever-escalating complexity of cyber threats. It achieves this by providing learners
-with a platform to engage in simulated cyberattack scenarios, supervised and designed by experienced pentesters.
-This comprehensive approach allows learners to actively apply security measures, perform system modifications,
-and handle incident responses to counteract the attacks. Engaging in this hands-on practice within realistic
-environments enhances their server security skills and provides practical experience in identifying and
-mitigating cybersecurity risks. ZANSIN's flexible design accommodates diverse skill levels and learning styles,
-making it a comprehensive and evolving platform for cybersecurity education.
+ZANSIN is envisioned as a GROUNDBREAKING cybersecurity training tool designed to equip users against the ever-escalating complexity of cyber threats. It achieves this by providing learners with a platform to engage in simulated cyberattack scenarios, supervised and designed by experienced pentesters.
+This comprehensive approach allows learners to actively apply security measures, perform system modifications, and handle incident responses to counteract the attacks. Engaging in this hands-on practice within realistic environments enhances their server security skills and provides practical experience in identifying and mitigating cybersecurity risks. ZANSIN's flexible design accommodates diverse skill levels and learning styles, making it a comprehensive and evolving platform for cybersecurity education.
 
-- Details are currently being finalized, and more information will be provided soon.
-## Getting Started with ZANSIN
+## What does 'ZANSIN' mean?
 
-### Pre-Requisites
+- [What does 'ZANSIN' mean?](./documents/ZANSIN.md)
 
-Before you begin, ensure you have access to a Linux server meeting the following criteria:
+## System Overview
 
-- Operating System: `Ubuntu 20.04+`. Other Linux distributions' compatibility is currently under evaluation.
-- Sufficient privileges to execute system commands and make network configurations.
-- SSH service installed on both servers
+- [System Overview](./documents/SystemOverview.md)
+ 
+## Deploymentation
 
-### User Creation and Setup
+- [Requirements](./documents/Requirements.md)
+- [Deploymentation](./documents/Deploymentation.md)
 
-First, login to remote servers.
-Create a new user named `hardmini` with a home directory and bash as the default shell:
+## Play Scenario
 
 ```bash
 sudo useradd zansin
@@ -94,9 +90,9 @@ The user connecting must have the permissions to execute sudo, and please enter 
     A -- Ansible connection --> D[game-server]
     A -- Ansible connection --> E[red-server]
 ```
+- [Scenario - MINI QUEST](./documents/MINIQUEST.md)
+- [Usage](./documents/Usage.md)
 
 ## Cite This Work
 
-Details on how to cite ZANSIN in your academic and professional works will be provided
-after our official release.
-
+Details on how to cite ZANSIN in your academic and professional works will be provided after our official release.
