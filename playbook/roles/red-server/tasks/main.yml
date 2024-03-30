@@ -1,8 +1,2 @@
 ---
-- name: Create an empty text file in /tmp
-  file:
-    path: "/tmp/testfile.txt"
-    state: touch
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0644'
+

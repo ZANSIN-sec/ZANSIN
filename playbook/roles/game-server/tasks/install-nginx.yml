@@ -9,7 +9,7 @@
 
 - name: Copy nginx config
   template:
-    src: nginx-eng.conf
+    src: default.conf
     dest: /etc/nginx/sites-available/default
 
 - name: Copy .htpasswd config
