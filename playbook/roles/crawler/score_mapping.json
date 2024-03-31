@@ -1,0 +1,29 @@
+{
+	"settings":{
+		"number_of_shards": 1,
+		"number_of_replicas": 0
+	},
+	"mappings": {
+      "score": {
+        "properties": {
+          "team": {
+            "type": "text",
+            "store": true
+          },
+          "site": {
+            "type": "text",
+            "store": true
+          },
+          "score": {
+            "type": "integer",
+            "store": true
+          },
+          "created": {
+            "type": "date",
+            "store": true,
+            "format": "basic_date_time_no_millis"
+          }
+        }
+      }
+    }
+}

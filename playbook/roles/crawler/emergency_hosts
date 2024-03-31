@@ -1,0 +1,26 @@
+# Corporate.
+172.31.101.30   corporate.team-a.mini.local
+172.31.102.30   corporate.team-b.mini.local
+172.31.103.30   corporate.team-c.mini.local
+172.31.104.30   corporate.team-d.mini.local
+172.31.105.30   corporate.team-e.mini.local
+172.31.106.30   corporate.team-f.mini.local
+172.31.107.30   corporate.team-g.mini.local
+
+# Game API.
+172.31.101.40   game.team-a.mini.local
+172.31.102.40   game.team-b.mini.local
+172.31.103.40   game.team-c.mini.local
+172.31.104.40   game.team-d.mini.local
+172.31.105.40   game.team-e.mini.local
+172.31.106.40   game.team-f.mini.local
+172.31.107.40   game.team-g.mini.local
+
+# Repository.
+172.31.101.50   repository.team-a.mini.local
+172.31.102.50   repository.team-b.mini.local
+172.31.103.50   repository.team-c.mini.local
+172.31.104.50   repository.team-d.mini.local
+172.31.105.50   repository.team-e.mini.local
+172.31.106.50   repository.team-f.mini.local
+172.31.107.50   repository.team-g.mini.local
