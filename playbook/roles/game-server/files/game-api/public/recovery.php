@@ -102,6 +102,13 @@ if($_SERVER["REQUEST_METHOD"] === "GET"){
       }
     }
 
+    //Validate the value of post value
+    if($request_json->{'price'} !== 100 ) {
+      $result["msg"] = "The sent price value is invalid.";
+      echo json_encode($result);
+      exit();
+    }
+
     // get stamina recover flag
     $stamina_flag = get_stamina_flag($redis, $redis_stamina_name);
     if($stamina_flag === false){
