@@ -24,7 +24,7 @@ class DbControl:
         # Read config.ini.
         full_path = os.path.dirname(os.path.abspath(__file__))
         config = configparser.ConfigParser()
-        config.read(os.path.join(full_path, 'config.ini'), encoding='utf-8')
+        config.read(os.path.join(full_path, 'crawler_config.ini'), encoding='utf-8')
 
         try:
             db_path = os.path.join(full_path, config['DB']['db_path'])
@@ -44,7 +44,7 @@ class DbControl:
                                             timeout=self.con_timeout,
                                             isolation_level=self.isolation_level)
         except Exception as e:
-            self.utility.print_message(FAIL, 'Reading config.ini is failure : {}'.format(e))
+            self.utility.print_message(FAIL, 'Reading crawler_config.ini is failure : {}'.format(e))
             sys.exit(1)
 
         # Query templates.
