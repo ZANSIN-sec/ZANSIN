@@ -11,7 +11,6 @@ from concurrent.futures import ThreadPoolExecutor
 from sql import DbControl
 from util import Utilty
 from modules.player import Player
-from modules.crawl_web import Crawl_Web
 
 # Type of printing.
 OK = 'ok'         # [*]
@@ -63,79 +62,16 @@ options:
 """.format(f=__file__)
 
 
-# Check competition time.
-def check_competition_time(start_time, lunch_time, restart_time, busy_time, end_time):
-    if start_time < lunch_time < restart_time <= busy_time <= end_time:
-        return True
-    else:
-        return False
+def check_competition_time(start_time, busy_time, end_time):
+    return True if start_time <= busy_time <= end_time else False
 
 
-# Execute crawling of corporate.
-def run_crawling_corporate(utility, start_time, lunch_time, restart_time, busy_time, end_time):
-    busy_flag = False
-    now_date = datetime.now()
-    access_status_corp = {}
-    while now_date < end_time:
-        now_date = datetime.now()
-        if now_date < start_time:
-            msg = '[Corp] The start time has not come yet. now={}, start={}'.format(now_date.strftime(time_format),
-                                                                                    start_time.strftime(time_format))
-            utility.print_message(WARNING, msg)
-            time.sleep(1.0)
-            continue
-        elif lunch_time <= now_date < restart_time:
-            msg = '[Corp] Now, lunch time. now={}, restart={}'.format(now_date.strftime(time_format),
-                                                                      restart_time.strftime(time_format))
-            utility.print_message(WARNING, msg)
-            time.sleep(1.0)
-            continue
-        elif busy_flag is False and now_date >= busy_time:
-            msg = '[Corp] The busy time has come. now={}, busy={}'.format(now_date.strftime(time_format),
-                                                                          busy_time.strftime(time_format))
-            utility.print_message(WARNING, msg)
-            utility.print_message(WARNING, 'Delay time will be cut in half.')
-            utility.loop_delay_rate_corporate = utility.busy_period_rate
-            busy_flag = True
-
-        web_crawling = Crawl_Web(utility)
-        for category in utility.corp_categories:
-            utility.print_message(NOTE, '[{}] Start Crawling.'.format(category))
-
-            # Get Web site information.
-            target_url, score, keywords = utility.get_web_info(category)
-
-            # Crawling.
-            if web_crawling.execute_crawling(utility.create_http_session(),
-                                             opt_team,
-                                             category,
-                                             target_url,
-                                             score,
-                                             keywords):
-                utility.print_message(NOTE, 'Successful accessing to {} site.'.format(category))
-                access_status_corp[category] = True
-            else:
-                utility.print_message(FAIL, 'Failure accessing to {} site.'.format(category))
-                access_status_corp[category] = False
-            utility.print_message(NOTE, '[{}] End Crawling.'.format(category))
-
-        utility.print_message(NOTE, 'Corp: {}'.format(access_status_corp))
-        time.sleep(utility.corporate_delay_time / utility.loop_delay_rate_corporate)
+def get_time_format():
+    return '%Y%m%d%H%M%S'
 
 
 # Execute crawling of Game.
-def play_game(utility, start_time, lunch_time, restart_time, busy_time, end_time, is_repo=False):
-    # Get repository file and store to local file.
-    repo_hash_file = os.path.join(full_path, utility.repo_hash_file)
-    if is_repo and os.path.exists(repo_hash_file) is False:
-        status, _, hash_response = utility.get_repo_file(file_type='csv')
-        if status is False:
-            msg = 'Could not access to repository server: {}'.format(utility.repo_url_csv)
-            utility.print_message(FAIL, msg)
-            exit(1)
-        with codecs.open(repo_hash_file, mode='w', encoding='utf-8') as fout:
-            fout.write(hash_response)
-
+def play_game(utility, learner_name, start_time, busy_time, end_time):
     # Get all existing player's data from local db.
     player_list = []
     try:
@@ -183,20 +119,14 @@ def play_game(utility, start_time, lunch_time, restart_time, busy_time, end_time
     while now_date < end_time:
         now_date = datetime.now()
         if now_date < start_time:
-            msg = '[Game] The start time has not come yet. now={}, start={}'.format(now_date.strftime(time_format),
-                                                                                    start_time.strftime(time_format))
-            utility.print_message(WARNING, msg)
-            time.sleep(1.0)
-            continue
-        elif lunch_time <= now_date < restart_time:
-            msg = '[Game] Now, lunch time. now={}, restart={}'.format(now_date.strftime(time_format),
-                                                                      restart_time.strftime(time_format))
+            msg = '[Game] The start time has not come yet. now={}, start={}'.format(now_date.strftime(get_time_format()),
+                                                                                    start_time.strftime(get_time_format()))
             utility.print_message(WARNING, msg)
             time.sleep(1.0)
             continue
         elif busy_flag is False and now_date >= busy_time:
-            msg = '[Game] The busy time has come. now={}, busy={}'.format(now_date.strftime(time_format),
-                                                                          busy_time.strftime(time_format))
+            msg = '[Game] The busy time has come. now={}, busy={}'.format(now_date.strftime(get_time_format()),
+                                                                          busy_time.strftime(get_time_format()))
             utility.print_message(WARNING, msg)
             utility.print_message(WARNING, 'Delay time will be cut in half.')
             utility.loop_delay_rate = utility.busy_period_rate
@@ -290,7 +220,7 @@ def play_game(utility, start_time, lunch_time, restart_time, busy_time, end_time
         # Send the amount of charge to score server.
         # total_charge_amount_in_this_epoch = utility.get_player_charge()
         total_charge_amount_in_this_epoch = utility.get_player_charge_in_this_epoch(epochs + 1, successful_player_list)
-        if utility.send_charge(opt_team, total_charge_amount_in_this_epoch):
+        if utility.store_score_to_db(learner_name, total_charge_amount_in_this_epoch):
             utility.print_message(OK, 'Successful sending charge.')
         else:
             utility.print_message(FAIL, 'Failure sending charge.')
@@ -305,138 +235,35 @@ def play_game(utility, start_time, lunch_time, restart_time, busy_time, end_time
         utility.print_message(NOTE,
                               'Epoch {}: Player num={}, Earned charge={}.'.format(epochs + 1, len(player_list),
                                                                                   total_charge_amount_in_this_epoch))
-        utility.print_message(NOTE, 'Epoch {}: {} End Game!!'.format(epochs + 1, opt_team))
+        utility.print_message(NOTE, 'Epoch {}: {} End Game!!'.format(epochs + 1, learner_name))
         utility.print_message(NOTE, 'Repo: {}'.format(access_status_repo))
         time.sleep(waiting_time / utility.loop_delay_rate)
         epochs += 1
 
-        # Checking status of repository server.
-        if is_repo and epochs % utility.repo_interval == 0:
-            # Check README.md.
-            status, raw_res, _ = utility.get_repo_file(file_type='readme')
-            if status is False:
-                utility.print_message(WARNING, 'Could not access to repository server: {}'.format(
-                    utility.repo_url_readme))
-                access_status_repo['Readme'] = False
-            elif utility.judge_hacked(raw_res, utility.repo_regex_hacked) is False:
-                utility.print_message(WARNING, '{} is hacked!!'.format(utility.repo_url_readme))
-                access_status_repo['Readme'] = False
-            else:
-                #  Send score to score server.
-                access_status_repo['Readme'] = True
-                if utility.send_score(opt_team, 'repository', utility.repo_score):
-                    utility.print_message(OK, 'Successful sending score.')
-                else:
-                    utility.print_message(FAIL, 'Failure sending score.')
-
-            # Check hash value of csv files (equipment.csv, level.csv).
-            status, _, hash_remote = utility.get_repo_file(file_type='csv')
-            if status is False:
-                utility.print_message(WARNING,
-                                      'Could not access to repository server: {}'.format(utility.repo_url_csv))
-                access_status_repo['Csv'] = False
-            else:
-                # Open local hash file.
-                with codecs.open(repo_hash_file, mode='r', encoding='utf-8') as fin:
-                    hash_local = fin.read()
-
-                # Compare local hash and remote hash.
-                if hash_local != hash_remote:
-                    utility.print_message(WARNING, 'Does not match the local hash "{}" and remote hash "{}".'.
-                                          format(hash_local, hash_remote))
-                    access_status_repo['Csv'] = False
-                else:
-                    #  Send score to score server.
-                    access_status_repo['Csv'] = True
-                    if utility.send_score(opt_team, 'repository', utility.repo_score):
-                        utility.print_message(OK, 'Successful sending score.')
-                    else:
-                        utility.print_message(FAIL, 'Failure sending score.')
-
 
 # main.
-if __name__ == '__main__':
-    file_name = os.path.basename(__file__)
-    full_path = os.path.dirname(os.path.abspath(__file__))
-
-    # Get command argument.
-    args = docopt(__doc__)
-    opt_team = args['--team']
-    opt_exec_game = args['--game']
-    opt_exec_corp = args['--corp']
-    opt_exec_repo = args['--repo']
-    opt_delete_db = args['--delete-db']
-    opt_debug = args['--debug']
-    opt_english = args['--english']
-
-    # Crawling all service (Game API, Repository, Corporate).
-    if not opt_exec_game and not opt_exec_corp and not opt_exec_repo:
-        opt_exec_game = True
-        opt_exec_corp = True
-        opt_exec_repo = True
-
+def crawler_execution(learner_name, start_time, busy_time, end_time):
     # Create Utility instance.
-    utility = Utilty(opt_team, debug=opt_debug, english=opt_english)
+    utility = Utilty(learner_name)
 
     # Initialize Database.
     sql = DbControl(utility)
     utility.sql = sql
-
-    # Delete local db (optional).
-    if opt_delete_db:
-        msg = 'The crawler will remove all user information from the local and server after 10 seconds!!'
-        utility.print_message(WARNING, msg)
-        time.sleep(10)
-
-        # Get users to be removed from local DB
-        player_list = []
-        players = utility.get_all_players()
-
-        for player_data in players:
-            session = utility.create_http_session()
-            session_id = utility.user_login(session, player_data['user_id'], player_data['password'])
-
-            if session_id is None:
-                # Inactive player that could not login.
-                utility.print_message(FAIL, 'Login failed: user deletion need login')
-                sys.exit()
-            else:
-                # Execute deletion of user
-                exist_player = Player(utility, session, session_id)
-                exist_player.delete_user(session)
-
-        # Delete local DB of this crawler
-        sql.delete(sql.conn, sql.state_delete_all)
 
     # Show banner.
     show_banner(utility)
 
     # Get competition term.
     now_date = datetime.now()
-    time_format = '%Y%m%d%H%M%S'
-    start_time = utility.transform_date_object(utility.competition_start_time, time_format)
-    lunch_time = utility.transform_date_object(utility.competition_lunch_time, time_format)
-    restart_time = utility.transform_date_object(utility.competition_restart_time, time_format)
-    busy_time = utility.transform_date_object(utility.competition_busy_time, time_format)
-    end_time = utility.transform_date_object(utility.competition_end_time, time_format)
-    if check_competition_time(start_time, lunch_time, restart_time, busy_time, end_time) is False:
-        msg = 'Indicated competition time is invalid : not "start={} < lunch={} < restart={} <= busy={} <= end={}".'\
-            .format(start_time,
-                    lunch_time,
-                    restart_time,
-                    busy_time,
-                    end_time)
+    start_time = utility.transform_date_object(start_time, get_time_format())
+    busy_time = utility.transform_date_object(busy_time, get_time_format())
+    end_time = utility.transform_date_object(end_time, get_time_format())
+    if check_competition_time(start_time, busy_time, end_time) is False:
+        msg = 'Indicated competition time is invalid : not "start={} <= busy={} <= end={}".'\
+            .format(start_time, busy_time, end_time)
         utility.print_message(FAIL, msg)
-        exit(1)
-
-    # Execute crawling corporate.
-    if opt_exec_corp:
-        thread_corp = threading.Thread(target=run_crawling_corporate,
-                                       args=(utility, start_time, lunch_time, restart_time, busy_time, end_time))
-        thread_corp.start()
+        return False
 
     # Execute playing Game.
-    if opt_exec_game:
-        play_game(utility, start_time, lunch_time, restart_time, busy_time, end_time, is_repo=opt_exec_repo)
+    play_game(utility, learner_name, start_time, busy_time, end_time)
 
-    utility.print_message(NOTE, 'Finish {}'.format(file_name))
