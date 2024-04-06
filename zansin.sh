@@ -76,5 +76,17 @@ ansible-playbook -i inventory.ini game-servers.yml &>/dev/null
 
 deploy_status "ZANSIN environment setup complete!" $GREEN
 
+
+# Dockerコンテナのディレクトリとコマンドの設定
+DOCKER_DIR=""
+DOCKER_CMD=""
+
+# SSH接続
+sshpass -p "Passw0rd!23" ssh "vender@$training_ip" << EOF
+  cd /home/vendor/game-api
+  docker-compose up -d
+EOF
+
+
 # Stop displaying ZANSIN
 kill $ZANSIN_PID
