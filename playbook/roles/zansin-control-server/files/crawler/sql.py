@@ -38,13 +38,12 @@ class DbControl:
             if os.path.exists(self.db_file) is False:
                 # Create table.
                 self.db_initialize('user_info')
+                self.db_initialize('operating_ratio')
             else:
                 # Create connection.
-                self.conn = sqlite3.connect(self.db_file,
-                                            timeout=self.con_timeout,
-                                            isolation_level=self.isolation_level)
+                self.conn = sqlite3.connect(self.db_file, timeout=self.con_timeout, isolation_level=self.isolation_level)
         except Exception as e:
-            self.utility.print_message(FAIL, 'Reading crawler_config.ini is failure : {}'.format(e))
+            self.utility.print_message(FAIL, f'Reading crawler_config.ini is failure : {e}')
             sys.exit(1)
 
         # Query templates.
@@ -71,16 +70,14 @@ class DbControl:
                                 'weapon_id = ?,'\
                                 'armor_id = ? '\
                                 'WHERE user_id = ?'
-        self.state_delete = 'DELETE FROM UserInfoTBL WHERE user_id = ?'
-        self.state_delete_all = 'DELETE FROM UserInfoTBL'
+        self.state_delete_user_info = 'DELETE FROM UserInfoTBL WHERE user_id = ?'
+        self.state_delete_all_user_info = 'DELETE FROM UserInfoTBL'
+        self.state_delete_all_operating_ratio = 'DELETE FROM OperatingRatioTBL'
 
     # Initialize Data base.
-    def db_initialize(self, db_name):
-        if db_name == 'user_info':
-            with sqlite3.connect(self.db_file,
-                                 timeout=self.con_timeout,
-                                 isolation_level=self.isolation_level) as conn:
-                sql_query = ''
+    def db_initialize(self, table_name):
+        with sqlite3.connect(self.db_file, timeout=self.con_timeout, isolation_level=self.isolation_level) as conn:
+            if table_name == 'user_info':
                 try:
                     # Create table.
                     sql_query = 'CREATE TABLE IF NOT EXISTS UserInfoTBL(' \
@@ -108,14 +105,32 @@ class DbControl:
                     conn.commit()
                     self.conn = conn
                 except Exception as e:
-                    self.utility.print_message(FAIL, 'Could not create {} table: {}'.format(db_name, sql_query))
+                    self.utility.print_message(FAIL, 'Could not create {} table: {}'.format(table_name, sql_query))
                     self.utility.print_exception(e, '')
                     sys.exit(1)
-        else:
-            self.utility.print_message(FAIL, 'Indicator {} is unknown.'.format(db_name))
-            sys.exit(1)
-
-        return
+            elif table_name == 'operating_ratio':
+                sql_query = ''
+                try:
+                    # Create table.
+                    sql_query = 'CREATE TABLE IF NOT EXISTS OperatingRatioTBL(' \
+                                'id INTEGER PRIMARY KEY AUTOINCREMENT, ' \
+                                'learner_name, ' \
+                                'epoch INTEGER, ' \
+                                'charge_amount, ' \
+                                'error INTEGER, ' \
+                                'error_reason INTEGER, ' \
+                                'registration_date DATE);'
+                    conn.execute('begin transaction')
+                    conn.execute(sql_query)
+                    conn.commit()
+                    self.conn = conn
+                except Exception as e:
+                    self.utility.print_message(FAIL, 'Could not create {} table: {}'.format(table_name, sql_query))
+                    self.utility.print_exception(e, '')
+                    sys.exit(1)
+            else:
+                self.utility.print_message(FAIL, 'Indicator {} is unknown.'.format(table_name))
+                sys.exit(1)
 
     # Execute INSERT query.
     def insert(self, conn, sql_query, params):

@@ -38,18 +38,28 @@ options:
 
 
 # Calling the Crawler.
-def module_crawler(learner_name, start_time, end_time):
-    crawler_execution(learner_name, start_time, end_time)
+def execute_crawler(learner_name, start_time, end_time, user_agent):
+    crawler_execution(learner_name, start_time, end_time, user_agent)
 
 
 # Calling the Attack tool.
-def module_attack_tool():
+def execute_attack_tool():
     print('attack tool')
 
 
 # Calling the Judge.r
-def module_judge():
+def execute_judge():
     print('Judge!!')
+
+
+# Delete table records of crawler.
+def delete_table_crawler():
+    print('Delete crawler table!!')
+
+
+# Delete table records of attack tool.
+def delete_table_attack_tool():
+    print('Delete attack tool table!!')
 
 
 def get_training_time(training_hours: int = 4) -> str:
@@ -75,6 +85,7 @@ if __name__ == '__main__':
         # Read config.ini.
         config = configparser.ConfigParser()
         config.read(os.path.join(full_path, 'config.ini'), encoding='utf-8')
+        user_agent = config['Common']['user-agent']
 
         # Show banner.
         show_banner()
@@ -83,8 +94,8 @@ if __name__ == '__main__':
         start_time, end_time = get_training_time(int(config['Common']['training_hours']))
 
         # Define modules and arguments for threading.
-        thread_crawler = threading.Thread(target=module_crawler, args=(opt_leaner, start_time, end_time))
-        thread_attack_tool = threading.Thread(target=module_attack_tool)
+        thread_crawler = threading.Thread(target=execute_crawler, args=(opt_leaner, start_time, end_time, user_agent))
+        thread_attack_tool = threading.Thread(target=execute_attack_tool)
 
         # Execute threads.
         thread_crawler.start()
@@ -95,7 +106,11 @@ if __name__ == '__main__':
         thread_attack_tool.join()
 
         # Execute Judge.
-        module_judge()
+        execute_judge()
+
+        # Delete records of crawler and attack tool.
+        delete_table_crawler()
+        delete_table_attack_tool()
     except Exception as e:
         print(e.args)
 

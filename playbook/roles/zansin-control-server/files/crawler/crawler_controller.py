@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from .util import Utilty
 from .sql import DbControl
 from .modules.player import Player
+from constants import *
 
 # Type of printing.
 OK = 'ok'         # [*]
@@ -70,7 +71,7 @@ def get_time_format():
 
 
 # Execute crawling of Game.
-def play_game(utility, learner_name, start_time, end_time):
+def play_game(utility, learner_name, start_time, end_time, user_agent):
     # Get all existing player's data from local db.
     player_list = []
     try:
@@ -123,13 +124,6 @@ def play_game(utility, learner_name, start_time, end_time):
             utility.print_message(WARNING, msg)
             time.sleep(1.0)
             continue
-        elif busy_flag is False and now_date >= busy_time:
-            msg = '[Game] The busy time has come. now={}, busy={}'.format(now_date.strftime(get_time_format()),
-                                                                          busy_time.strftime(get_time_format()))
-            utility.print_message(WARNING, msg)
-            utility.print_message(WARNING, 'Delay time will be cut in half.')
-            utility.loop_delay_rate = utility.busy_period_rate
-            busy_flag = True
 
         # Check users number.
         if len(player_list) >= utility.max_player_num:
@@ -230,18 +224,16 @@ def play_game(utility, learner_name, start_time, end_time):
         waiting_time += utility.epoch_delay_time
 
         # Waiting per epoch.
-        utility.print_message(OK, '{}[s] waiting. (including penalty {}[s])'.format(waiting_time, penalty_time))
-        utility.print_message(NOTE,
-                              'Epoch {}: Player num={}, Earned charge={}.'.format(epochs + 1, len(player_list),
-                                                                                  total_charge_amount_in_this_epoch))
-        utility.print_message(NOTE, 'Epoch {}: {} End Game!!'.format(epochs + 1, learner_name))
-        utility.print_message(NOTE, 'Repo: {}'.format(access_status_repo))
+        utility.print_message(OK, f'{waiting_time}[s] waiting. (including penalty {penalty_time}[s])')
+        utility.print_message(NOTE, f'Epoch {epochs + 1}: Player num={len(player_list)}, Earned charge={total_charge_amount_in_this_epoch}.')
+        utility.print_message(NOTE, f'Epoch {epochs + 1}: {learner_name} End Game!!')
+        utility.print_message(NOTE, f'Repo: {access_status_repo}')
         time.sleep(waiting_time / utility.loop_delay_rate)
         epochs += 1
 
 
 # main.
-def crawler_execution(learner_name, start_time, end_time):
+def crawler_execution(learner_name, start_time, end_time, user_agent):
     # Create Utility instance.
     utility = Utilty(learner_name)
 
@@ -259,6 +251,9 @@ def crawler_execution(learner_name, start_time, end_time):
         utility.print_message(FAIL, msg)
         return False
 
-    # Execute playing Game.
-    play_game(utility, learner_name, start_time, end_time)
+    # Initialize tables.
+    utility.delete_user_info_table()
+    utility.delete_operating_ratio_table()
 
+    # Execute playing Game.
+    play_game(utility, learner_name, start_time, end_time, user_agent)

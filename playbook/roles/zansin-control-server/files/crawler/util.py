@@ -443,7 +443,19 @@ class Utilty:
         except Exception as e:
             self.print_exception(e, 'Could not insert new user.')
 
-        return
+    # Delete all user table.
+    def delete_user_info_table(self):
+        try:
+            self.sql.delete(self.sql.conn, self.sql.state_delete_all_user_info)
+        except Exception as e:
+            self.print_exception(e, 'Could not delete user info table.')
+
+    # Delete all operating ratio table.
+    def delete_operating_ratio_table(self):
+        try:
+            self.sql.delete(self.sql.conn, self.sql.state_delete_all_operating_ratio)
+        except Exception as e:
+            self.print_exception(e, 'Could not delete operating ratio.')
 
     # Judge Falsification.
     def judge_falsification(self, user_status):
