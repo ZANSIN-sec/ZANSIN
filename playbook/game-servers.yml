@@ -1,6 +1,6 @@
 ---
 - name: Configure training server
-  hosts: training-machines
+  hosts: training-machine
   remote_user: zansin
   become: yes
   vars:
@@ -15,7 +15,7 @@
         name: training-machine
 
 - name: Setup control server
-  hosts: zansin-control-servers
+  hosts: zansin-control-server
   remote_user: zansin
   become: yes
   vars:
