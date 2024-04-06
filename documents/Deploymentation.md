@@ -17,7 +17,7 @@ This script will handle the environment setup process.
 ## Run the Setup Script
 Once the script is downloaded, make it executable and run it with sudo:
 
-bash```
+```bash
 chmod +x zansin.sh
 sudo ./zansin.sh
 ```
