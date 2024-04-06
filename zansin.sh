@@ -76,7 +76,7 @@ ansible-playbook -i inventory.ini game-servers.yml
 
 deploy_status "ZANSIN environment setup complete!" $GREEN
 
-sshpass -p "Passw0rd!23" ssh "vender@$training_ip" << EOF
+sshpass -p "Passw0rd!23" ssh　-o StrictHostKeyChecking=no "vendor@$training_ip" << EOF
   cd /home/vendor/game-api
   docker-compose up -d
 EOF
