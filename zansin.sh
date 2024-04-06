@@ -57,18 +57,11 @@ else
 fi
 
 # Enter and set password
-deploy_status "Enter new password for zansin user..." $CYAN
-sudo echo "Please enter zansin user's new password:"
-read -s new_password
-sudo echo "zansin:$new_password" | sudo chpasswd &>/dev/null
-sudo sed -i "s/ansible_ssh_pass:.*/ansible_ssh_pass: $new_password/" game-servers.yml &>/dev/null
-sudo sed -i "s/ansible_become_password:.*/ansible_become_password: $new_password/" game-servers.yml &>/dev/null
-
-# Log in to training server using SSH password and change password
-deploy_status "Changing password on training server..." $YELLOW
-sshpass -p "Passw0rd!" ssh -o StrictHostKeyChecking=no zansin@$training_ip &>/dev/null << EOF
-sudo echo "zansin:$new_password" | sudo chpasswd
-EOF
+deploy_status "Enter current password for zansin user..." $CYAN
+sudo echo "Please enter zansin user's current password:"
+read -s current_password
+sudo sed -i "s/ansible_ssh_pass:.*/ansible_ssh_pass: $current_password/" game-servers.yml &>/dev/null
+sudo sed -i "s/ansible_become_password:.*/ansible_become_password: $current_password/" game-servers.yml &>/dev/null
 
 # Run Ansible playbook
 deploy_status "Running Ansible playbook to set up servers..." $GREEN
