@@ -1,37 +1,31 @@
 ---
-- name: Configure game server
-  hosts: game-servers
-  gather_facts: True
+- name: Configure training server
+  hosts: training-machines
   remote_user: zansin
   become: yes
   vars:
-    hostname: game-server
+    hostname: training-machine
     ansible_ssh_user: zansin
     ansible_ssh_pass: Passw0rd!
-    ansible_become_password: Passw0rd!  # 追加
-  roles:
-    - name: game-server
-      # Add import statement for game-server role
-      import_role:
-        name: game-server
-
-- name: Setup red server
-  become: yes
-  become_user: root
-  vars:
     ansible_become_password: Passw0rd!
-  hosts: red-servers
-  become: yes
-  gather_facts: True
+  roles:
+    - name: training-machine
+      # Add import statement for training-machine role
+      import_role:
+        name: training-machine
+
+- name: Setup control server
+  hosts: zansin-control-servers
   remote_user: zansin
+  become: yes
   vars:
-    hostname: red-server
+    hostname: zansin-control-server
     ansible_ssh_user: zansin
     ansible_ssh_pass: Passw0rd!
-    ansible_become_password: Passw0rd!  # 追加
+    ansible_become_password: Passw0rd!
   roles:
-    - name: red-server
-      # Add import statement for red-server role
+    - name: zansin-control-server
+      # Add import statement for zansin-control-server role
       import_role:
-        name: red-server
-      tags: red-server
+        name: zansin-control-server
+      tags: zansin-control-server
