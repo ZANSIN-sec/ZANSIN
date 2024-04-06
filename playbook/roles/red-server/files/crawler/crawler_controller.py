@@ -8,9 +8,9 @@ import threading
 from docopt import docopt
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
-from sql import DbControl
-from util import Utilty
-from modules.player import Player
+from .util import Utilty
+from .sql import DbControl
+from .modules.player import Player
 
 # Type of printing.
 OK = 'ok'         # [*]
@@ -23,15 +23,14 @@ NONE = 'none'     # No label.
 # Display banner.
 def show_banner(utility):
     banner = """
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-███╗   ███╗██╗███╗   ██╗██╗       ██████╗██████╗  █████╗ ██╗    ██╗██╗     ███████╗██████╗ 
-████╗ ████║██║████╗  ██║██║      ██╔════╝██╔══██╗██╔══██╗██║    ██║██║     ██╔════╝██╔══██╗
-██╔████╔██║██║██╔██╗ ██║██║█████╗██║     ██████╔╝███████║██║ █╗ ██║██║     █████╗  ██████╔╝
-██║╚██╔╝██║██║██║╚██╗██║██║╚════╝██║     ██╔══██╗██╔══██║██║███╗██║██║     ██╔══╝  ██╔══██╗
-██║ ╚═╝ ██║██║██║ ╚████║██║      ╚██████╗██║  ██║██║  ██║╚███╔███╔╝███████╗███████╗██║  ██║
-╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝       ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝╚══════╝╚═╝  ╚═╝ (v4)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+███████╗ █████╗ ███╗   ██╗███████╗██╗███╗   ██╗       ██████╗██████╗  █████╗ ██╗    ██╗██╗     ███████╗██████╗ 
+╚══███╔╝██╔══██╗████╗  ██║██╔════╝██║████╗  ██║      ██╔════╝██╔══██╗██╔══██╗██║    ██║██║     ██╔════╝██╔══██╗
+  ███╔╝ ███████║██╔██╗ ██║███████╗██║██╔██╗ ██║█████╗██║     ██████╔╝███████║██║ █╗ ██║██║     █████╗  ██████╔╝
+ ███╔╝  ██╔══██║██║╚██╗██║╚════██║██║██║╚██╗██║╚════╝██║     ██╔══██╗██╔══██║██║███╗██║██║     ██╔══╝  ██╔══██╗
+███████╗██║  ██║██║ ╚████║███████║██║██║ ╚████║      ╚██████╗██║  ██║██║  ██║╚███╔███╔╝███████╗███████╗██║  ██║
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝╚═╝  ╚═══╝       ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝╚══════╝╚═╝  ╚═╝
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """ + 'by ' + os.path.basename(__file__)
     utility.print_message(NONE, banner)
     show_credit(utility)
@@ -41,9 +40,9 @@ def show_banner(utility):
 # Show credit.
 def show_credit(utility):
     credit = u"""
-       =[ Version : MINI-Crawler v0.2.0                  ]=
-+ -- --=[ Author  : @bbr_bbq, @kazukiigeta               ]=--
-+ -- --=[ https://github.com/minihardening/mini4-crawler ]=--
+       =[ Version : ZANSIN-Crawler v0.0.1       ]=
++ -- --=[ Author  : @bbr_bbq, @kazukiigeta      ]=--
++ -- --=[ https://github.com/ZANSIN-sec/ZANSIN/ ]=--
     """
     utility.print_message(NONE, credit)
 
@@ -242,7 +241,7 @@ def play_game(utility, learner_name, start_time, busy_time, end_time):
 
 
 # main.
-def crawler_execution(learner_name, start_time, busy_time, end_time):
+def crawler_execution(learner_name, start_time, end_time):
     # Create Utility instance.
     utility = Utilty(learner_name)
 
