@@ -16,7 +16,6 @@ from urllib3 import util
 from datetime import datetime
 from logging import getLogger, FileHandler, Formatter
 from collections import deque
-from elasticsearch import Elasticsearch
 
 # Printing colors.
 OK_BLUE = '\033[94m'      # [*]

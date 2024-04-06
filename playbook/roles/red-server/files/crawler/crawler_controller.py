@@ -61,8 +61,8 @@ options:
 """.format(f=__file__)
 
 
-def check_competition_time(start_time, busy_time, end_time):
-    return True if start_time <= busy_time <= end_time else False
+def is_valid_training_time(start_time, end_time):
+    return True if start_time <= end_time else False
 
 
 def get_time_format():
@@ -70,7 +70,7 @@ def get_time_format():
 
 
 # Execute crawling of Game.
-def play_game(utility, learner_name, start_time, busy_time, end_time):
+def play_game(utility, learner_name, start_time, end_time):
     # Get all existing player's data from local db.
     player_list = []
     try:
@@ -253,16 +253,12 @@ def crawler_execution(learner_name, start_time, end_time):
     show_banner(utility)
 
     # Get competition term.
-    now_date = datetime.now()
-    start_time = utility.transform_date_object(start_time, get_time_format())
-    busy_time = utility.transform_date_object(busy_time, get_time_format())
-    end_time = utility.transform_date_object(end_time, get_time_format())
-    if check_competition_time(start_time, busy_time, end_time) is False:
-        msg = 'Indicated competition time is invalid : not "start={} <= busy={} <= end={}".'\
-            .format(start_time, busy_time, end_time)
+    if is_valid_training_time(start_time, end_time) is False:
+        msg = f'Indicated competition time is invalid : not "start={utility.transform_date_string(start_time)} ' \
+              f'<= end={utility.transform_date_string(end_time)}".'
         utility.print_message(FAIL, msg)
         return False
 
     # Execute playing Game.
-    play_game(utility, learner_name, start_time, busy_time, end_time)
+    play_game(utility, learner_name, start_time, end_time)
 

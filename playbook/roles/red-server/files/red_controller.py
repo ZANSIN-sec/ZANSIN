@@ -28,12 +28,11 @@ def show_banner():
 # Define command option.
 __doc__ = """{f}
 usage:
-    {f} -n <name>
-    {f} -s <servername>
+    {f} -n <name> -s <servername>
     {f} -h | --help
 options:
-    -n <name>        Require: Leaner name (e.g., Taro Zansin).
-    -s <servername>  Require: Target hostname (e.g., 192.168.0.5).
+    -n <name>        : Leaner name (e.g., Taro Zansin).
+    -s <servername>  : Target hostname (e.g., 192.168.0.5).
     -h --help Show this help message and exit.
 """.format(f=__file__)
 
@@ -57,9 +56,8 @@ def get_training_time(training_hours: int = 4) -> str:
     if not isinstance(training_hours, int):
         raise Exception('The format of the training time is incorrect.')
 
-    current_time = datetime.now()
-    training_start_date = current_time.strftime('%Y%m%d%H%M%S')
-    training_end_date = (current_time + timedelta(hours=training_hours)).strftime('%Y%m%d%H%M%S')
+    training_start_date = datetime.now()
+    training_end_date = training_start_date + timedelta(hours=training_hours)
     return training_start_date, training_end_date
 
 
@@ -71,8 +69,8 @@ if __name__ == '__main__':
     try:
         # Get command argument.
         args = docopt(__doc__)
-        opt_leaner = args['<name>']
-        opt_hostname = args['<servername>']
+        opt_leaner = args['-n']
+        opt_hostname = args['-s']
 
         # Read config.ini.
         config = configparser.ConfigParser()
@@ -82,7 +80,7 @@ if __name__ == '__main__':
         show_banner()
 
         # Get training time.
-        start_time, end_time = get_training_time(config['Common']['training_hours'])
+        start_time, end_time = get_training_time(int(config['Common']['training_hours']))
 
         # Define modules and arguments for threading.
         thread_crawler = threading.Thread(target=module_crawler, args=(opt_leaner, start_time, end_time))
