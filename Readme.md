@@ -1,4 +1,4 @@
-![ZANSIN](./images/F317526F1119930E21EC0A70B21E8A0F892AF67B.png)
+![ZANSIN](./images/ZANSIN_LOGO.png)
 
 ZANSIN
 =================
