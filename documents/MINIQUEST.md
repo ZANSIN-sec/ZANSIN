@@ -63,6 +63,8 @@ When accessing the online game itself, you simply need to access the IP address 
 
 `http://{IP ADDRESS}`
 
+![MINI QUEST](../images/MINIQUEST.gif)
+
 > [!NOTE]
 > If HTTP is blocked by a firewall, port forwarding may be required to access the game through a browser.
 
@@ -72,7 +74,7 @@ The progression of the game screen is as follows:
 
 ![State Transition Diagram](../images/7863d519ae098f9a4b0601e9abcf530d880a18db.png)
 
-## User Management
+## Admin Panel
 
 As the administrator of the online game server, you have the ability to manage game players.
 
