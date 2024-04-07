@@ -15,7 +15,7 @@ This comprehensive approach allows learners to actively apply security measures,
 ## System Overview
 
 - [System Overview](./documents/SystemOverview.md)
- 
+
 ## Deploymentation
 
 - [Requirements](./documents/Requirements.md)
@@ -57,7 +57,7 @@ Be back to local computer and clone the repository and navigate to the playbook 
 
 ```bash
 git clone https://github.com/zansin-sec/zansin.git
-cd zanshin/playbook
+cd zansin/playbook
 ```
 
 ### Setup Attack Server
