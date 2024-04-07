@@ -66,12 +66,8 @@ def is_valid_training_time(start_time, end_time):
     return True if start_time <= end_time else False
 
 
-def get_time_format():
-    return '%Y%m%d%H%M%S'
-
-
 # Execute crawling of Game.
-def play_game(utility, learner_name, start_time, end_time, user_agent):
+def play_game(utility, learner_name, start_time, end_time):
     # Get all existing player's data from local db.
     player_list = []
     try:
@@ -82,45 +78,25 @@ def play_game(utility, learner_name, start_time, end_time, user_agent):
             session_id = utility.user_login(session, player_data['user_id'], player_data['password'])
             if session_id is None:
                 # Inactive player that could not login.
-                session = None
-                utility.print_message(WARNING, 'Player "{}" is not active.'.format(player_data['user_id']))
+                utility.print_message(WARNING, f'Player \"{player_data["user_id"]}\" is not active.')
                 utility.update_user_status(player_data['user_id'])
+                continue
             else:
                 # Add active player to the player's list.
-                exist_player = Player(utility, session, session_id)
-                exist_player.utility.player_id = player_data['id']
-                exist_player.charge_sum = player_data['charge']
-                exist_player.injustice_num = player_data['injustice_num']
-                exist_player.user_name = player_data['user_id']
-                exist_player.password = player_data['password']
-                exist_player.nick_name = player_data['nickname']
-                exist_player.created_at = player_data['created_at']
-                exist_player.level = player_data['level']
-                exist_player.exp = player_data['exp']
-                exist_player.gold = player_data['gold']
-                exist_player.max_hp = player_data['max_hp']
-                exist_player.max_stamina = player_data['max_stamina']
-                exist_player.max_str = player_data['max_str']
-                exist_player.need_exp = player_data['need_exp']
-                exist_player.stamina = player_data['stamina']
-                exist_player.staminaupdated_at = player_data['staminaupdated_at']
-                exist_player.weapon_id = player_data['weapon_id']
-                exist_player.armor_id = player_data['armor_id']
+                exist_player = Player(utility, session, session_id, existing_player_data=player_data)
                 player_list.append(exist_player)
     except Exception as e:
-        utility.print_message(FAIL, 'Could not get player list from local db: {}'.format(e.args))
+        utility.print_message(FAIL, f'Could not get player list from local db: {e.args}')
 
     # Execute crawling.
-    busy_flag = False
     player = None
-    epochs = 0
+    epochs = 1
     now_date = datetime.now()
-    access_status_repo = {}
     while now_date < end_time:
         now_date = datetime.now()
         if now_date < start_time:
-            msg = '[Game] The start time has not come yet. now={}, start={}'.format(now_date.strftime(get_time_format()),
-                                                                                    start_time.strftime(get_time_format()))
+            msg = f'[Game] The start time has not come yet. now={now_date.strftime(utility.get_time_format())}, ' \
+                  f'start={start_time.strftime(utility.get_time_format())}'
             utility.print_message(WARNING, msg)
             time.sleep(1.0)
             continue
@@ -139,31 +115,36 @@ def play_game(utility, learner_name, start_time, end_time, user_agent):
                 session = None
 
             # Execute Login.
-            utility.print_message(NOTE, 'Player "{}" login.'.format(user_id))
+            utility.print_message(NOTE, f'Player "{user_id}" login.')
             session_id = utility.user_login(session, user_id, password)
-            if session_id is None:
-                session = None
-            else:
+            if session_id is not None:
                 # Create New player's instance.
-                utility.print_message(OK, 'Complete creating new player: {}'.format(user_id))
+                utility.print_message(OK, f'Complete creating new player: {user_id}')
                 utility.insert_new_user(user_id, password, nick_name)
                 utility.player_id = utility.get_player_id(user_id)
                 new_player = Player(utility, session, session_id)
                 if new_player.get_user_information(save=True) is not False:
                     player_list.append(new_player)
 
-        # Play game!!
+        # Check cheat occurred previous epoch.
         game_results = []
-        utility.print_message(NOTE, 'Epoch {}: Start Game!!'.format(epochs + 1))
-        with ThreadPoolExecutor(max_workers=utility.max_player_num, thread_name_prefix='thread') as executor:
-            for player in player_list:
-                game_results.append(executor.submit(player.play_game))
+        if not utility.is_cheat_previous_epoch(learner_name, epochs - 1):
+            # Play game!!
+            utility.print_message(NOTE, f'Epoch {epochs}: Start Game!!')
+            with ThreadPoolExecutor(max_workers=utility.max_player_num, thread_name_prefix='thread') as executor:
+                for player in player_list:
+                    game_results.append(executor.submit(player.play_game))
+        else:
+            # Skip game.
+            utility.print_message(NOTE, 'Skip playing game because of cheating that occurred in the previous epoch.')
 
         # Judgement of cheat users.
         count_cheat_user_in_ranking = 0
         user_names_in_crawler = [player.user_name for player in player_list]
 
-        # Consider high level users created not by the crawler in the level ranking as cheaters
+        # Check cheat: If there are high level users in the level ranking that has not been registered by the crawler.
+        is_cheat = False
+        cheat_reason = ''
         try:
             response, _, _ = utility.get_ranking(utility.create_http_session())
             if response is not None:
@@ -171,8 +152,8 @@ def play_game(utility, learner_name, start_time, end_time, user_agent):
                 level_ranking_user_names_out_of_crawler.update(
                     [d['user_name'] for d in response if d['user_name'] not in user_names_in_crawler])
                 count_cheat_user_in_ranking += len(level_ranking_user_names_out_of_crawler)
-                utility.print_message(NOTE,
-                                      f'The number of level cheat users: {len(level_ranking_user_names_out_of_crawler)}')
+                utility.print_message(NOTE, f'The number of level cheat users: {len(level_ranking_user_names_out_of_crawler)}')
+                cheat_reason = 'Level cheating occurred. ' if len(level_ranking_user_names_out_of_crawler) != 0 else ''
 
             # Consider level-1 users created not by the crawler in the weapon ranking as cheaters
             response, _, _ = utility.get_ranking(utility.create_http_session(), sort='weapon')
@@ -183,20 +164,25 @@ def play_game(utility, learner_name, start_time, end_time, user_agent):
                      for d in response
                      if d['level'] == 1 and d['user_name'] not in user_names_in_crawler])
                 count_cheat_user_in_ranking += len(weapon_ranking_user_names_out_of_crawler)
-                utility.print_message(NOTE,
-                                      f'The number of gatya cheat users: {len(weapon_ranking_user_names_out_of_crawler)}')
+                utility.print_message(NOTE, f'The number of gatya cheat users: {len(weapon_ranking_user_names_out_of_crawler)}')
+                cheat_reason += 'Gatya cheat occurred.' if len(weapon_ranking_user_names_out_of_crawler) != 0 else ''
+
+            # Judge cheat.
+            is_cheat = True if count_cheat_user_in_ranking != 0 else False
         except Exception as e:
             time.sleep(10)
-            utility.print_message(FAIL, 'Could not compute cheat user number: {}.'.format(e.args))
+            utility.print_message(FAIL, f'Could not compute cheat user number: {e.args}.')
 
         # End game for 1 epoch.
+        is_playing_game_disable = False
         successful_player_list = []
         total_injustice_count = 0
         for player, game_result in zip(player_list, game_results):
             # Withdrawal.
             if game_result.result() is False:
                 # Interrupt.
-                utility.print_message(WARNING, 'Player "{}" interrupts the game.'.format(player.user_name))
+                is_playing_game_disable = True
+                utility.print_message(WARNING, f'Player "{player.user_name}" interrupts the game.')
             else:
                 # Add player who successful of game.
                 successful_player_list.append(player)
@@ -210,24 +196,26 @@ def play_game(utility, learner_name, start_time, end_time, user_agent):
             if player.injustice_num > 0:
                 total_injustice_count += player.injustice_num
 
-        # Send the amount of charge to score server.
-        # total_charge_amount_in_this_epoch = utility.get_player_charge()
-        total_charge_amount_in_this_epoch = utility.get_player_charge_in_this_epoch(epochs + 1, successful_player_list)
-        if utility.store_score_to_db(learner_name, total_charge_amount_in_this_epoch):
-            utility.print_message(OK, 'Successful sending charge.')
+        # Store the amount of charge and operation ratio.
+        charge_amount_per_epoch = utility.get_player_charge_in_this_epoch(epochs, successful_player_list)
+        if utility.insert_game_status_to_db(learner_name,
+                                            epochs,
+                                            is_cheat,
+                                            cheat_reason,
+                                            is_playing_game_disable,
+                                            charge_amount_per_epoch):
+            utility.print_message(OK, 'Successful stored operation ratio/charge to DB.')
         else:
-            utility.print_message(FAIL, 'Failure sending charge.')
+            utility.print_message(FAIL, 'Failure store operation ratio/charge to DB.')
 
         # Compute loop delay time.
-        penalty_time = utility.penalty_time_coef * total_injustice_count + count_cheat_user_in_ranking * utility.cheat_penalty_time_coef
-        waiting_time = utility.judge_waiting_time(player_list) + penalty_time
+        waiting_time = utility.judge_waiting_time(player_list)
         waiting_time += utility.epoch_delay_time
 
         # Waiting per epoch.
-        utility.print_message(OK, f'{waiting_time}[s] waiting. (including penalty {penalty_time}[s])')
-        utility.print_message(NOTE, f'Epoch {epochs + 1}: Player num={len(player_list)}, Earned charge={total_charge_amount_in_this_epoch}.')
-        utility.print_message(NOTE, f'Epoch {epochs + 1}: {learner_name} End Game!!')
-        utility.print_message(NOTE, f'Repo: {access_status_repo}')
+        utility.print_message(OK, f'{waiting_time}[s] waiting.')
+        utility.print_message(NOTE, f'Epoch {epochs}: Player num={len(player_list)}, Earned charge={charge_amount_per_epoch}.')
+        utility.print_message(NOTE, f'Epoch {epochs}: {learner_name} End Game!!')
         time.sleep(waiting_time / utility.loop_delay_rate)
         epochs += 1
 
@@ -256,4 +244,5 @@ def crawler_execution(learner_name, start_time, end_time, user_agent):
     utility.delete_operating_ratio_table()
 
     # Execute playing Game.
-    play_game(utility, learner_name, start_time, end_time, user_agent)
+    utility.ua = user_agent
+    play_game(utility, learner_name, start_time, end_time)

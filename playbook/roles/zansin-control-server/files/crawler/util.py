@@ -17,6 +17,8 @@ from datetime import datetime
 from logging import getLogger, FileHandler, Formatter
 from collections import deque
 
+from .constants import *
+
 # Printing colors.
 OK_BLUE = '\033[94m'      # [*]
 NOTE_GREEN = '\033[92m'   # [+]
@@ -291,6 +293,9 @@ class Utilty:
     def transform_date_string(self, target_date):
         return target_date.strftime(self.report_date_format)
 
+    def get_time_format(self):
+        return '%Y%m%d%H%M%S'
+
     # Delete control character.
     def delete_ctrl_char(self, origin_text):
         clean_text = ''
@@ -457,80 +462,106 @@ class Utilty:
         except Exception as e:
             self.print_exception(e, 'Could not delete operating ratio.')
 
+    # Check stamina integrity.
+    def is_invalid_stamina_integrity(self, stamina, max_stamina):
+        return True if max_stamina < stamina else False
+
+    # Check gold.
+    def is_invalid_gold(self, level, gold):
+        is_invalid = False
+        if level <= 20 and gold > 1500:
+            is_invalid = True
+        elif 20 < level <= 40 and gold > 2000:
+            is_invalid = True
+        elif 40 < level <= 60 and gold > 2500:
+            is_invalid = True
+        elif 60 < level <= 80 and gold > 3000:
+            is_invalid = True
+        return is_invalid
+
+    # Check max stamina.
+    def is_invalid_stamina(self, level, max_stamina):
+        is_invalid = False
+        if level <= 20 and max_stamina > 50:
+            is_invalid = True
+        elif 20 < level <= 40 and max_stamina > 100:
+            is_invalid = True
+        elif 40 < level <= 60 and max_stamina > 150:
+            is_invalid = True
+        elif 60 < level <= 80 and max_stamina > 200:
+            is_invalid = True
+        return is_invalid
+
+    # Check max hp.
+    def is_invalid_hp(self, level, max_hp):
+        is_invalid = False
+        if level <= 20 and max_hp > 100:
+            is_invalid = True
+        elif 20 < level <= 40 and max_hp > 150:
+            is_invalid = True
+        elif 40 < level <= 60 and max_hp > 200:
+            is_invalid = True
+        elif 60 < level <= 80 and max_hp > 250:
+            is_invalid = True
+        return is_invalid
+
+    # Check max strength.
+    def is_invalid_strength(self, level, max_str):
+        is_invalid = False
+        if level <= 20 and max_str > 50:
+            is_invalid = True
+        elif 20 < level <= 40 and max_str > 100:
+            is_invalid = True
+        elif 40 < level <= 60 and max_str > 150:
+            is_invalid = True
+        elif 60 < level <= 80 and max_str > 200:
+            is_invalid = True
+        return is_invalid
+
+    # Check experience.
+    def is_invalid_experience(self, level, exp):
+        is_invalid = False
+        if level <= 20 and exp > 200:
+            is_invalid = True
+        elif 20 < level <= 40 and exp > 300:
+            is_invalid = True
+        elif 40 < level <= 60 and exp > 800:
+            is_invalid = True
+        elif 60 < level <= 80 and exp > 2500:
+            is_invalid = True
+        return is_invalid
+
     # Judge Falsification.
     def judge_falsification(self, user_status):
         try:
-            # Check integrity.
-            falsify_flag = False
-            if user_status.max_stamina < user_status.stamina:
+            # Check stamina integrity.
+            if self.is_invalid_stamina_integrity(user_status.stamina, user_status.max_stamina):
                 self.print_message(WARNING, 'Your max stamina is smaller than current stamina.')
-                falsify_flag = True
-            if falsify_flag:
                 self.print_message(WARNING, 'Your max_stamina is falsified!!')
                 return False
 
             # Check gold.
-            if user_status.level <= 20 and user_status.gold > 1500:
-                falsify_flag = True
-            elif 20 < user_status.level <= 40 and user_status.gold > 2000:
-                falsify_flag = True
-            elif 40 < user_status.level <= 60 and user_status.gold > 2500:
-                 falsify_flag = True
-            elif 60 < user_status.level <= 80 and user_status.gold > 3000:
-                falsify_flag = True
-            if falsify_flag:
+            if self.is_invalid_gold(user_status.level, user_status.gold):
                 self.print_message(WARNING, 'Your gold is falsified!!')
                 return False
 
             # Check max stamina.
-            if user_status.level <= 20 and user_status.max_stamina > 50:
-                falsify_flag = True
-            elif 20 < user_status.level <= 40 and user_status.max_stamina > 100:
-                falsify_flag = True
-            elif 40 < user_status.level <= 60 and user_status.max_stamina > 150:
-                falsify_flag = True
-            elif 60 < user_status.level <= 80 and user_status.max_stamina > 200:
-                falsify_flag = True
-            if falsify_flag:
+            if self.is_invalid_stamina(user_status.level, user_status.max_stamina):
                 self.print_message(WARNING, 'Your max stamina is falsified!!')
                 return False
 
             # Check max hp.
-            if user_status.level <= 20 and user_status.max_hp > 100:
-                falsify_flag = True
-            elif 20 < user_status.level <= 40 and user_status.max_hp > 150:
-                falsify_flag = True
-            elif 40 < user_status.level <= 60 and user_status.max_hp > 200:
-                falsify_flag = True
-            elif 60 < user_status.level <= 80 and user_status.max_hp > 250:
-                falsify_flag = True
-            if falsify_flag:
+            if self.is_invalid_hp(user_status.level, user_status.max_hp):
                 self.print_message(WARNING, 'Your max hp is falsified!!')
                 return False
 
             # Check max strength.
-            if user_status.level <= 20 and user_status.max_str > 50:
-                falsify_flag = True
-            elif 20 < user_status.level <= 40 and user_status.max_str > 100:
-                falsify_flag = True
-            elif 40 < user_status.level <= 60 and user_status.max_str > 150:
-                falsify_flag = True
-            elif 60 < user_status.level <= 80 and user_status.max_str > 200:
-                falsify_flag = True
-            if falsify_flag:
+            if self.is_invalid_strength(user_status.level, user_status.max_str):
                 self.print_message(WARNING, 'Your max strength is falsified!!')
                 return False
 
             # Check experience.
-            if user_status.level <= 20 and user_status.exp > 200:
-                falsify_flag = True
-            elif 20 < user_status.level <= 40 and user_status.exp > 300:
-                falsify_flag = True
-            elif 40 < user_status.level <= 60 and user_status.exp > 800:
-                falsify_flag = True
-            elif 60 < user_status.level <= 80 and user_status.exp > 2500:
-                falsify_flag = True
-            if falsify_flag:
+            if self.is_invalid_experience(user_status.level, user_status.exp):
                 self.print_message(WARNING, 'Your experience is falsified!!')
                 return False
             return True
@@ -618,7 +649,6 @@ class Utilty:
         parameter = {}
         for item in params.items():
             parameter[urllib.parse.unquote(item[0])] = urllib.parse.unquote(item[1])
-
         return parameter
 
     # Create http session.
@@ -627,7 +657,6 @@ class Utilty:
         session = requests.session()
         if self.proxy is not None:
             session.proxies = self.proxy
-
         return session
 
     # Get ranking information.
@@ -686,15 +715,15 @@ class Utilty:
             time.sleep(self.loop_wait_time)
             return None, None, None
         elif type(response) != dict:
-            self.print_message(WARNING, '{}'.format('"response" is not dict.'))
+            self.print_message(WARNING, '"response" is not dict.')
             time.sleep(self.loop_wait_time)
             return None, None, None
         elif 'result' not in response.keys():
-            self.print_message(WARNING, '{}'.format('"result" is not included in "response".'))
+            self.print_message(WARNING, '"result" is not included in "response".')
             time.sleep(self.loop_wait_time)
             return None, None, None
         elif response['result'] == 'ng':
-            self.print_message(WARNING, '{}'.format(response['msg']))
+            self.print_message(WARNING, f'{response["msg"]}')
             time.sleep(self.loop_wait_time)
             return None, None, None
         else:
@@ -716,19 +745,19 @@ class Utilty:
             time.sleep(self.loop_wait_time)
             return None
         elif type(response) != dict:
-            self.print_message(WARNING, '{}'.format('"response" is not dict.'))
+            self.print_message(WARNING, '"response" is not dict.')
             time.sleep(self.loop_wait_time)
             return None
         elif 'result' not in response.keys():
-            self.print_message(WARNING, '{}'.format('"result" is not included in "response".'))
+            self.print_message(WARNING, '"result" is not included in "response".')
             time.sleep(self.loop_wait_time)
             return None
         elif response['result'] == 'ng':
-            self.print_message(WARNING, '{}'.format(response['msg']))
+            self.print_message(WARNING, f'{response["msg"]}')
             time.sleep(self.loop_wait_time)
             return None
         elif 'session_id' not in response.keys():
-            self.print_message(WARNING, '{}'.format('"session_id" is not included in "response".'))
+            self.print_message(WARNING, '"session_id" is not included in "response".')
             time.sleep(self.loop_wait_time)
             return None
         else:
@@ -738,15 +767,44 @@ class Utilty:
     def judge_hacked(self, response, regex_hacked):
         status = True
         if re.search(regex_hacked, response) is not None:
-            self.print_message(WARNING, 'This site is hacked : including "{}"'.format(regex_hacked))
+            self.print_message(WARNING, f'This site is hacked : including "{regex_hacked}"')
             status = False
         return status
 
-    # Save score to DB (sqlite3).
-    def store_score_to_db(self, team, site, score):
-        """
-        Store charge in DB.
-        """
+    # Judge cheat occurred previous epoch.
+    def is_cheat_previous_epoch(self, learner_name, previous_epoch):
+        if previous_epoch > 1:
+            previous_epoch_game_status = self.get_game_status_previous_epoch(learner_name, previous_epoch)
+            return True if previous_epoch_game_status[6] == IS_CHEAT.CHEAT else False
+        else:
+            self.print_message(NOTE, f'No cheat has occurred because the previous epoch is "{previous_epoch}"')
+            return False
+
+    # Get game status of previous epoch.
+    def get_game_status_previous_epoch(self, learner_name, previous_epoch):
+        try:
+            cur = self.sql.select(self.sql.conn, self.sql.state_select_game_status, (learner_name, previous_epoch))
+            results = cur.fetchall()
+            return results
+        except Exception as e:
+            self.print_exception(e, 'Could not read game status from Database.')
+            return False
+
+    # Save game status to DB (sqlite3).
+    def insert_game_status_to_db(self, learner_name, epoch, is_cheat, cheat_reason, is_game_disable, charge_amount):
+        try:
+            insert_data = (
+                learner_name,
+                epoch,
+                charge_amount,
+                EPOCH_STATUS.ERROR if is_cheat or is_game_disable else EPOCH_STATUS.NORMAL,
+                cheat_reason,
+                IS_CHEAT.CHEAT if is_cheat else IS_CHEAT.NORMAL,
+                self.get_current_date()
+            )
+            self.sql.insert(self.sql.conn, self.sql.state_insert_game_status, insert_data)
+        except Exception as e:
+            self.print_exception(e, 'Could not insert game status.')
         return True
 
     # Send charge to Score Server (Elasticsearch).
