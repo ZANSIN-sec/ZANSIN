@@ -38,7 +38,7 @@ class DbControl:
             if os.path.exists(self.db_file) is False:
                 # Create table.
                 self.db_initialize('user_info')
-                self.db_initialize('operating_ratio')
+                self.db_initialize('game_status')
             else:
                 # Create connection.
                 self.conn = sqlite3.connect(self.db_file, timeout=self.con_timeout, isolation_level=self.isolation_level)
@@ -51,7 +51,9 @@ class DbControl:
         self.state_select_id = 'SELECT id FROM UserInfoTBL WHERE user_id = ?'
         self.state_select_injustice = 'SELECT injustice_num FROM UserInfoTBL WHERE user_id = ?'
         self.state_select_charge = 'SELECT sum(charge) FROM UserInfoTBL'
+        self.state_select_game_status = 'SELECT * FROM GameStatusTBL WHERE learner_name = ? AND epoch = ?'
         self.state_insert = 'INSERT INTO UserInfoTBL (status,user_id,password,nickname, charge,injustice_num) VALUES (?,?,?,?,0,0)'
+        self.state_insert_game_status = 'INSERT INTO GameStatusTBL (learner_name,epoch,charge_amount,error,error_reason,registration_date) VALUES (?,?,?,?,?,?)'
         self.state_update_inactive = 'UPDATE UserInfoTBL SET status = 0 WHERE user_id = ?'
         self.state_update_charge = 'UPDATE UserInfoTBL SET charge = ? WHERE user_id = ?'
         self.state_update_injustice_num = 'UPDATE UserInfoTBL SET injustice_num = ? WHERE user_id = ?'
@@ -108,17 +110,18 @@ class DbControl:
                     self.utility.print_message(FAIL, 'Could not create {} table: {}'.format(table_name, sql_query))
                     self.utility.print_exception(e, '')
                     sys.exit(1)
-            elif table_name == 'operating_ratio':
+            elif table_name == 'game_status':
                 sql_query = ''
                 try:
                     # Create table.
-                    sql_query = 'CREATE TABLE IF NOT EXISTS OperatingRatioTBL(' \
+                    sql_query = 'CREATE TABLE IF NOT EXISTS GameStatusTBL(' \
                                 'id INTEGER PRIMARY KEY AUTOINCREMENT, ' \
                                 'learner_name, ' \
                                 'epoch INTEGER, ' \
                                 'charge_amount, ' \
                                 'error INTEGER, ' \
                                 'error_reason INTEGER, ' \
+                                'is_cheat INTEGER, ' \
                                 'registration_date DATE);'
                     conn.execute('begin transaction')
                     conn.execute(sql_query)
