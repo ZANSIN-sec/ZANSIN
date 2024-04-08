@@ -10,7 +10,7 @@ After logging in, ensure you are in the zansin user's home directory.
 Second, download the `zansin.sh` script from the repository:
 
 ```bash
-wget https://github.com/ZANSIN-sec/ZANSIN/blob/fix/zansin_command/zansin.sh
+wget https://raw.githubusercontent.com/ZANSIN-sec/ZANSIN/main/zansin.sh
 ```
 This script will handle the environment setup process.
 
