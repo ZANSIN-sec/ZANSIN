@@ -87,7 +87,7 @@ class Player:
                                                      self.utility.http_req_header,
                                                      {})
 
-        if status is False or self.utility.judge_hacked(response, self.utility.regex_hacked) is False:
+        if status is False or self.utility.judge_hacked(response, self.utility.regex_web_hacked) is False:
             self.utility.print_message(FAIL, 'Can not access to the Game Top.')
             return False
         else:

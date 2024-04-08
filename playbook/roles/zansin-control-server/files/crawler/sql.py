@@ -53,7 +53,7 @@ class DbControl:
         self.state_select_charge = 'SELECT sum(charge) FROM UserInfoTBL'
         self.state_select_game_status = 'SELECT * FROM GameStatusTBL WHERE learner_name = ? AND epoch = ?'
         self.state_insert = 'INSERT INTO UserInfoTBL (status,user_id,password,nickname, charge,injustice_num) VALUES (?,?,?,?,0,0)'
-        self.state_insert_game_status = 'INSERT INTO GameStatusTBL (learner_name,epoch,charge_amount,error,error_reason,registration_date) VALUES (?,?,?,?,?,?)'
+        self.state_insert_game_status = 'INSERT INTO GameStatusTBL (learner_name,epoch,charge_amount,error,error_reason,is_cheat,registration_date) VALUES (?,?,?,?,?,?,?)'
         self.state_update_inactive = 'UPDATE UserInfoTBL SET status = 0 WHERE user_id = ?'
         self.state_update_charge = 'UPDATE UserInfoTBL SET charge = ? WHERE user_id = ?'
         self.state_update_injustice_num = 'UPDATE UserInfoTBL SET injustice_num = ? WHERE user_id = ?'
@@ -74,7 +74,7 @@ class DbControl:
                                 'WHERE user_id = ?'
         self.state_delete_user_info = 'DELETE FROM UserInfoTBL WHERE user_id = ?'
         self.state_delete_all_user_info = 'DELETE FROM UserInfoTBL'
-        self.state_delete_all_operating_ratio = 'DELETE FROM OperatingRatioTBL'
+        self.state_delete_all_operating_ratio = 'DELETE FROM GameStatusTBL'
 
     # Initialize Data base.
     def db_initialize(self, table_name):

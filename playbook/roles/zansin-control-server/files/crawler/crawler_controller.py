@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from .util import Utilty
 from .sql import DbControl
 from .modules.player import Player
-from constants import *
+from .constants import *
 
 # Type of printing.
 OK = 'ok'         # [*]
@@ -140,7 +140,7 @@ def play_game(utility, learner_name, start_time, end_time):
 
         # Judgement of cheat users.
         count_cheat_user_in_ranking = 0
-        user_names_in_crawler = [player.user_name for player in player_list]
+        nick_names_in_crawler = [player.nick_name for player in player_list]
 
         # Check cheat: If there are high level users in the level ranking that has not been registered by the crawler.
         is_cheat = False
@@ -150,7 +150,7 @@ def play_game(utility, learner_name, start_time, end_time):
             if response is not None:
                 level_ranking_user_names_out_of_crawler = set()
                 level_ranking_user_names_out_of_crawler.update(
-                    [d['user_name'] for d in response if d['user_name'] not in user_names_in_crawler])
+                    [d['nick_name'] for d in response if d['nick_name'] not in nick_names_in_crawler])
                 count_cheat_user_in_ranking += len(level_ranking_user_names_out_of_crawler)
                 utility.print_message(NOTE, f'The number of level cheat users: {len(level_ranking_user_names_out_of_crawler)}')
                 cheat_reason = 'Level cheating occurred. ' if len(level_ranking_user_names_out_of_crawler) != 0 else ''
@@ -160,9 +160,9 @@ def play_game(utility, learner_name, start_time, end_time):
             if response is not None:
                 weapon_ranking_user_names_out_of_crawler = set()
                 weapon_ranking_user_names_out_of_crawler.update(
-                    [d['user_name']
+                    [d['nick_name']
                      for d in response
-                     if d['level'] == 1 and d['user_name'] not in user_names_in_crawler])
+                     if d['level'] == 1 and d['nick_name'] not in nick_names_in_crawler])
                 count_cheat_user_in_ranking += len(weapon_ranking_user_names_out_of_crawler)
                 utility.print_message(NOTE, f'The number of gatya cheat users: {len(weapon_ranking_user_names_out_of_crawler)}')
                 cheat_reason += 'Gatya cheat occurred.' if len(weapon_ranking_user_names_out_of_crawler) != 0 else ''
@@ -221,9 +221,9 @@ def play_game(utility, learner_name, start_time, end_time):
 
 
 # main.
-def crawler_execution(learner_name, start_time, end_time, user_agent):
+def crawler_execution(learner_name, target_hostname, start_time, end_time, user_agent):
     # Create Utility instance.
-    utility = Utilty(learner_name)
+    utility = Utilty(learner_name, target_hostname, user_agent)
 
     # Initialize Database.
     sql = DbControl(utility)
