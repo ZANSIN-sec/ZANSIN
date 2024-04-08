@@ -38,8 +38,8 @@ options:
 
 
 # Calling the Crawler.
-def execute_crawler(learner_name, start_time, end_time, user_agent):
-    crawler_execution(learner_name, start_time, end_time, user_agent)
+def execute_crawler(learner_name, target_host, start_time, end_time, user_agent):
+    crawler_execution(learner_name, target_host, start_time, end_time, user_agent)
 
 
 # Calling the Attack tool.
@@ -94,7 +94,7 @@ if __name__ == '__main__':
         start_time, end_time = get_training_time(int(config['Common']['training_hours']))
 
         # Define modules and arguments for threading.
-        thread_crawler = threading.Thread(target=execute_crawler, args=(opt_leaner, start_time, end_time, user_agent))
+        thread_crawler = threading.Thread(target=execute_crawler, args=(opt_leaner, opt_hostname, start_time, end_time, user_agent))
         thread_attack_tool = threading.Thread(target=execute_attack_tool)
 
         # Execute threads.

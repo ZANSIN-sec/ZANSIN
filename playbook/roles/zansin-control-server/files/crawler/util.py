@@ -40,7 +40,7 @@ NONE = 'none'     # No label.
 
 # Utility class.
 class Utilty:
-    def __init__(self, team_name, sql=None):
+    def __init__(self, team_name, hostname, user_agent, sql=None):
         self.file_name = os.path.basename(__file__)
         self.full_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -50,6 +50,7 @@ class Utilty:
         config.read(os.path.join(full_path, 'crawler_config.ini'), encoding='utf-8')
 
         try:
+            self.ua = user_agent
             self.team_name = team_name
             self.player_id = 'Base'
             self.sql = sql
@@ -67,12 +68,11 @@ class Utilty:
             if os.path.exists(self.log_dir) is False:
                 os.mkdir(self.log_dir)
             self.modules_dir = config['Common']['module_path']
-            self.ua = config['Common']['user-agent']
             self.proxy_addr = config['Common']['proxy_addr']
             self.proxy_user = config['Common']['proxy_user']
             self.proxy_pass = config['Common']['proxy_pass']
             self.encoding = config['Common']['default_encoding']
-            self.target_host = config['Common']['target_host'].format(team_name)
+            self.target_host = hostname
             self.cookie_param = config['Common']['cookie_name']
             self.max_player_num = int(config['Common']['max_player_num'])
             self.max_player_level = int(config['Common']['max_player_level'])
@@ -391,7 +391,7 @@ class Utilty:
         for player in player_list:
             total_charge_amount_in_this_epoch += player.charge_amount_in_this_epoch
 
-        self.print_message(NOTE, 'Total charge amount: {}, epoch{}'.format(total_charge_amount_in_this_epoch, epoch))
+        self.print_message(NOTE, 'Total charge amount: {}, epoch: {}'.format(total_charge_amount_in_this_epoch, epoch))
         return total_charge_amount_in_this_epoch
 
     # Update charge amount each player.
@@ -697,7 +697,7 @@ class Utilty:
         password = hashlib.sha256(b'pass' + self.get_current_date().encode()).hexdigest()
 
         # Choice nick name from list.
-        with codecs.open(os.path.join(os.getcwd(), 'nickname.txt'), mode='r', encoding='utf-8') as fin:
+        with codecs.open(os.path.join(self.full_path, 'nickname.txt'), mode='r', encoding='utf-8') as fin:
             nickname_list = fin.read().split('\n')
         nick_name = random.choice(nickname_list) + '_' + hashlib.md5().hexdigest()[:10]
         self.api_new_user_params['user_name'] = user_id
@@ -773,9 +773,9 @@ class Utilty:
 
     # Judge cheat occurred previous epoch.
     def is_cheat_previous_epoch(self, learner_name, previous_epoch):
-        if previous_epoch > 1:
+        if previous_epoch > 0:
             previous_epoch_game_status = self.get_game_status_previous_epoch(learner_name, previous_epoch)
-            return True if previous_epoch_game_status[6] == IS_CHEAT.CHEAT else False
+            return True if previous_epoch_game_status[0][6] == IS_CHEAT.CHEAT.value else False
         else:
             self.print_message(NOTE, f'No cheat has occurred because the previous epoch is "{previous_epoch}"')
             return False
@@ -797,9 +797,9 @@ class Utilty:
                 learner_name,
                 epoch,
                 charge_amount,
-                EPOCH_STATUS.ERROR if is_cheat or is_game_disable else EPOCH_STATUS.NORMAL,
+                EPOCH_STATUS.ERROR.value if is_cheat or is_game_disable else EPOCH_STATUS.NORMAL.value,
                 cheat_reason,
-                IS_CHEAT.CHEAT if is_cheat else IS_CHEAT.NORMAL,
+                IS_CHEAT.CHEAT.value if is_cheat else IS_CHEAT.NORMAL.value,
                 self.get_current_date()
             )
             self.sql.insert(self.sql.conn, self.sql.state_insert_game_status, insert_data)
