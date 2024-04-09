@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from docopt import docopt
 
 from crawler.crawler_controller import crawler_execution
+from zansin_atk.atk_controller import atk_execution
+from zansinjudgepy.judge_controller import judge_execution
 
 
 # Display banner.
@@ -42,17 +44,20 @@ options:
 
 # Calling the Crawler.
 def execute_crawler(learner_name, target_host, start_time, end_time, user_agent):
-    crawler_execution(learner_name, target_host, start_time, end_time, user_agent)
+    print('crawler.')
+    #crawler_execution(learner_name, target_host, start_time, end_time, user_agent)
 
 
 # Calling the Attack tool.
 def execute_attack_tool(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent):
     print('attack tool')
+    atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent)
 
 
 # Calling the Judge.r
-def execute_judge():
+def execute_judge(target_host_ip):
     print('Judge!!')
+    judge_execution(target_host_ip)
 
 
 # Delete table records of crawler.
@@ -83,12 +88,12 @@ if __name__ == '__main__':
         # Get command argument.
         args = docopt(__doc__)
         arg_leaner = args['-n']
-        arg_training_server_ip = args['-s']
+        arg_training_server_ip = args['-t']
         arg_control_server_ip = args['-c']
         arg_control_server_port = args['-p']
-        arg_attack_scenario = args['-a']
+        arg_attack_scenario = int(args['-a'])
 
-        # Read config.ini.
+        # Read atk_config.ini.
         config = configparser.ConfigParser()
         config.read(os.path.join(full_path, 'config.ini'), encoding='utf-8')
 
@@ -119,7 +124,7 @@ if __name__ == '__main__':
         thread_attack_tool.join()
 
         # Execute Judge.
-        execute_judge()
+        execute_judge(arg_training_server_ip)
 
         # Delete records of crawler and attack tool.
         delete_table_crawler()
