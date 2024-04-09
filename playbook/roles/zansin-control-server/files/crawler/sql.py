@@ -21,7 +21,7 @@ class DbControl:
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.utility = utility
 
-        # Read atk_config.ini.
+        # Read crawler_config.ini.
         full_path = os.path.dirname(os.path.abspath(__file__))
         config = configparser.ConfigParser()
         config.read(os.path.join(full_path, 'crawler_config.ini'), encoding='utf-8')
