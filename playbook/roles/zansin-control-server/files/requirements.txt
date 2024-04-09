@@ -1,2 +1,8 @@
 docopt >= 0.6.2
 requests >= 2.25.1
+urllib3
+bs4
+lxml
+paramiko
+python-nmap
+aiohttp

@@ -44,7 +44,7 @@ class Utilty:
         self.file_name = os.path.basename(__file__)
         self.full_path = os.path.dirname(os.path.abspath(__file__))
 
-        # Read config.ini.
+        # Read atk_config.ini.
         full_path = os.path.dirname(os.path.abspath(__file__))
         config = configparser.ConfigParser()
         config.read(os.path.join(full_path, 'crawler_config.ini'), encoding='utf-8')
