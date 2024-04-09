@@ -1,6 +1,10 @@
 # Environment Setup
 
-## Log in as zansin　at zansin control server
+## Before installation of ZANSIN
+
+You should check IP addresses of both machines. They are used to connect from ZANSIN Controll Server to ZANSIN Training Machine directory, so they don't have to global IP addresses.
+
+## Log in as zansin at zansin control server
 
 First, log in to the zansin control server as the `zansin` user.
 After logging in, ensure you are in the zansin user's home directory.
