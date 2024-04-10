@@ -18,7 +18,6 @@ Inspired by Japan's immensely popular role-playing game that debuted in 1986, mo
 
 # Mission
 
-
 When initiating this scenario, cyber attacks and game cheating behaviors will be directed towards the online game servers that you must manage.
 
 In an online game where cyber attacks and cheating behaviors are prevalent, such as data tampering on the online game server, service interruptions, and frequent cheating incidents, legitimate users decrease, resulting in an inability to generate profits.
@@ -27,6 +26,10 @@ You must rigorously implement the following to consistently generate revenue:
 
 - Protect the server from cyber attacks.
 - Safeguard the game from cheating behaviors.
+
+This attack scenario will conclude in **4 hours**. 
+
+Therefore, please perform fixing vulnerabilities and incident response during the 4-hour period since the exercise began, striving to achieve a high score.
 
 # Scenario Environment
 
@@ -56,8 +59,7 @@ The API reference is available for download from the following link.
 
 - [API Refarence](../documents/API_Reference.pdf)
 
-# Accesing MINI QUEST
-
+# Browser Game - "MINI QUEST"
 
 When accessing the online game itself, you simply need to access the IP address of the online game server using HTTP (port 80/tcp).
 
@@ -94,3 +96,39 @@ As this page is a public page, it should be accessible to everyone.
 
 ![Ranking](../images/df9bb0949da341dd1bcedc7716577472bc492ad6.png)
 
+# Reference of MINI QUEST Server
+
+- Credentials on ZANSIN Training Machine
+  |Account Name|Password|Note|
+  |----|----|----|
+  |vendor|Passw0rd!23|You have to use this!! You can use `sudo`.|
+  |mario|Passw0rd!23||
+  |link|Passw0rd!23||
+  |sonic|Passw0rd!23||
+
+- Services
+  |Service|Note|
+  |----|----|
+  |SSH| credential: `vendor`/`Passw0rd!23`|
+  |MySQL| credential: `root` / `password`|
+  |HTTP| Game Page: http://{IP ADDRESS}<br>Admin Page: http://{IP ADDRESS}/user_liset/<br>User Ranking: http://{IP ADDRESS}/ranking/<br>phpMyAdmin: http://{IP ADDRESS}:5555|
+
+- Game API
+  - You can fined the source code in the folloing path;
+    - `/home/vendor/mini4-game-api-php`
+  - If you want to up / down the containers for Game APIs, please see the below;
+    - Start the containers
+      - `docker-compose up -d`
+    - Stop the containers
+      - `docker-composer down`
+
+
+# Prohibited Actions
+
+- Access Control
+  - Don't block connections from the ZANSIN Control Server based on the source IP address or tcp/udp port using Firewall etc.
+    - Connections as both legitimate users and attackers are sent from the ZANSIN Controll Server.
+    - If you block that, the ZANSIN Crawling Module and Scoring Module cannot access your service, then unnable to evaluate your score.
+- API
+  - Don't change the structure of JSON in API response.
+    - You can modify or remove values in API response, but don't change keys because the ZANSIN Crawing Module will not be able to get the response.
