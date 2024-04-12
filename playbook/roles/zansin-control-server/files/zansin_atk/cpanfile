@@ -1,0 +1,4 @@
+requires 'Net::DNS';
+requires 'Net::DNS::Nameserver';
+requires 'Acme::EyeDrops';
+requires 'DBD::SQLite';
