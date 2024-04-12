@@ -9,7 +9,7 @@ from docopt import docopt
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from .util import Utilty
-from .sql import DbControl
+from .crawler_sql import DbControl
 from .modules.player import Player
 from .constants import *
 
