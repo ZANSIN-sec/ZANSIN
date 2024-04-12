@@ -9,7 +9,7 @@ from docopt import docopt
 
 from crawler.crawler_controller import crawler_execution
 from zansin_atk.atk_controller import atk_execution
-from zansinjudgepy.judge_controller import judge_execution
+from zansinjudgepy.judge_controller import judge_execution_zansin_atk, judge_execution_crawler, display_score
 
 
 # Display banner.
@@ -44,25 +44,17 @@ options:
 
 # Calling the Crawler.
 def execute_crawler(learner_name, target_host, start_time, end_time, user_agent):
-    print('crawler.')
-    #crawler_execution(learner_name, target_host, start_time, end_time, user_agent)
+    crawler_execution(learner_name, target_host, start_time, end_time, user_agent)
 
 
 # Calling the Attack tool.
 def execute_attack_tool(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent):
-    print('attack tool')
     atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent)
 
 
-# Calling the Judge.r
-def execute_judge(target_host_ip):
-    print('Judge!!')
-    judge_execution(target_host_ip)
-
-
-# Delete table records of crawler.
-def delete_table_crawler():
-    print('Delete crawler table!!')
+# Calling the Judge and Display score.
+def execute_judge(target_host_ip, arg_leaner, crawler_db):
+    display_score(judge_execution_zansin_atk(target_host_ip), judge_execution_crawler(arg_leaner, crawler_db))
 
 
 # Delete table records of attack tool.
@@ -96,6 +88,9 @@ if __name__ == '__main__':
         # Read atk_config.ini.
         config = configparser.ConfigParser()
         config.read(os.path.join(full_path, 'config.ini'), encoding='utf-8')
+        crawler_db_path = config['Crawler']['crawler_game_status_db_path']
+        crawler_db_file_name = config['Crawler']['crawler_game_status_db_file']
+        crawler_db = os.path.join(full_path, crawler_db_path, crawler_db_file_name.format(arg_leaner))
 
         # Show banner.
         show_banner()
@@ -124,10 +119,9 @@ if __name__ == '__main__':
         thread_attack_tool.join()
 
         # Execute Judge.
-        execute_judge(arg_training_server_ip)
+        execute_judge(arg_training_server_ip, arg_leaner, crawler_db)
 
-        # Delete records of crawler and attack tool.
-        delete_table_crawler()
+        # Delete records of attack tool (Crawler's table is deleted at the beginning of the game by crawler).
         delete_table_attack_tool()
     except Exception as e:
         print(e.args)
