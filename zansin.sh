@@ -36,7 +36,7 @@ print_zansin $CYAN
 # Install packages and clone repository
 deploy_status "Installing required packages..." $YELLOW
 sudo apt update &>/dev/null && sudo apt install -y ansible sshpass git &>/dev/null
-git clone -b fix/zansin_command https://github.com/zansin-sec/zansin.git &>/dev/null
+git clone https://github.com/zansin-sec/zansin.git &>/dev/null
 cd zansin/playbook &>/dev/null
 
 # Enter IP addresses
