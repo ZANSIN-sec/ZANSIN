@@ -26,6 +26,10 @@ This comprehensive approach allows learners to actively apply security measures,
 - [Scenario - MINI QUEST](./documents/MINIQUEST.md)
 - [Usage](./documents/Usage.md)
 
+## Excesise Explanation
+
+- [Excesise Explanation](./documents/ExcesiseExplanation.md)
+
 ## Cite This Work
 
 Details on how to cite ZANSIN in your academic and professional works will be provided after our official release.
