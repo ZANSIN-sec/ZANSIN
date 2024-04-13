@@ -1,5 +1,5 @@
- [!IMPORTANT]
- ***This document explains the vulnerabilities of the training machine and the attacks carried out in the exercises, so if you don't want to know the answers to the exercises, please be careful of spoilers.***
+>  [!IMPORTANT]
+>  ***This document explains the vulnerabilities of the training machine and the attacks carried out in the exercises, so if you don't want to know the answers to the exercises, please be careful of spoilers.***
 
 # Vulnerabilities in the Traning Machine
 
