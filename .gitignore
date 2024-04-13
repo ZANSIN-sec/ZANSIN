@@ -7,3 +7,4 @@ tools/c2s/cmd/__pycache__/*
 venv/*
 *.db
 *.log
+*.pyc

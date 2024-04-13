@@ -34,9 +34,9 @@ usage:
     {f} -h | --help
 options:
     -n <name>                 : Leaner name (e.g., Taro Zansin).
-    -t <training-server-ip>   : Training Server IP Address (e.g., 192.168.0.5).
-    -c <control-server-ip>    : Control Server IP Address (e.g., 192.168.0.6).
-    -p <control-server-port>  : Control Server Port Number (e.g., 8080).
+    -t <training-server-ip>   : ZANSIN Training Machine's IP Address (e.g., 192.168.0.5).
+    -c <control-server-ip>    : ZANSIN Control Server's IP Address (e.g., 192.168.0.6).
+    -p <control-server-port>  : ZANSIN Control Server's Port Number (e.g., 8080).
     -a <attack-scenario>      : Attack Scenario Number (e.g., 1).
     -h --help Show this help message and exit.
 """.format(f=__file__)
