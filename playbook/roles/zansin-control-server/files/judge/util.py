@@ -40,7 +40,7 @@ NONE = 'none'     # No label.
 # Utility class.
 class Utility:
     # def __init__(self, target=None, team_name=None, debug=False):
-    def __init__(self, target="", debug=False):
+    def __init__(self, target="", debug=False, sql=None):
         self.target = target
         self.file_name = os.path.basename(__file__)
         self.full_path = os.path.dirname(os.path.abspath(__file__))
@@ -53,6 +53,7 @@ class Utility:
         try:
             # Common
             self.ua = config['Common']['user-agent']
+            self.sql = sql
             self.request_schema = config['Common']['request_schema']
             self.banner_delay = float(config['Common']['banner_delay'])
             self.con_timeout = float(config['Common']['con_timeout'])
@@ -66,12 +67,6 @@ class Utility:
             self.fail = config['Common']['fail']
             self.none = config['Common']['none']
             self.loop_wait_time = float(config['Common']['loop_wait_time'])
-            self.log_name = config['Common']['log_name']
-            self.log_dir = os.path.join(full_path, config['Common']['log_path'])
-            self.log_file = config['Common']['log_file'].format(self.target)
-            self.log_path = os.path.join(self.log_dir, self.log_file)
-            if os.path.exists(self.log_dir) is False:
-                os.mkdir(self.log_dir)
 
             # SSH Connect.
             self.ssh_password = config['SSH_Login']['password']
@@ -284,14 +279,6 @@ class Utility:
                                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                                 'Upgrade-Insecure-Requests': '1',
                                 'Content-Type': 'application/x-www-form-urlencoded'}
-        
-        # Setting logger.
-        self.logger = getLogger(self.log_name)
-        self.logger.setLevel(20)
-        file_handler = FileHandler(self.log_path)
-        self.logger.addHandler(file_handler)
-        formatter = Formatter('%(levelname)s,%(message)s')
-        file_handler.setFormatter(formatter)
 
     # Print metasploit's symbol.
     def print_message(self, type, message):
@@ -327,9 +314,6 @@ class Utility:
         self.print_message(WARNING, '{}'.format(e))
         self.print_message(WARNING, message)
         return
-
-    def write_log(self, loglevel, message):
-        self.logger.log(loglevel, self.get_current_date() + ' ' + message)
 
     # Get current date.
     def get_current_date(self, indicate_format=None):
@@ -1333,7 +1317,6 @@ class Utility:
             # Check response code.
             if res.status_code >= 400:
                 self.print_message(FAIL, 'Occur error: status={}'.format(res.status_code))
-                self.write_log(40, 'id={} Occur error: url={} status={} [{}].'.format(self.target, target_url, res.status_code, self.file_name))
                 return False, res.text
 
             # Convert from string to dictionary.
@@ -1365,7 +1348,6 @@ class Utility:
                 return True, res
             else:
                 self.print_message(FAIL, 'Occur error: status={}'.format(res.status_code))
-                self.write_log(40, 'id={} Occur error: url={} status={} [{}].'.format(self.target, target_url, res.status_code, self.file_name))
                 return False, res
 
 
@@ -1390,7 +1372,6 @@ class Utility:
             # Check response code.
             if res.status_code >= 400:
                 self.print_message(FAIL, 'Occur error: status={}'.format(res.status_code))
-                self.write_log(40, 'id={} Occur error: url={} status={} [{}].'.format(self.target, target_url, res.status_code, self.file_name))
                 return False, res
 
             return True, res
@@ -1418,7 +1399,6 @@ class Utility:
             # Check response code.
             if res.status_code >= 400:
                 self.print_message(FAIL, 'Occur error: status={}'.format(res.status_code))
-                self.write_log(40, 'id={} Occur error: url={} status={} [{}].'.format(self.target, target_url, res.status_code, self.file_name))
                 return False, res
 
             return True, res
@@ -1456,4 +1436,15 @@ class Utility:
                 #self.print_exception(e, 'Accessing is failure : {}'.format(target))
                 return None
 
-            
+    # Save game status to DB (sqlite3).
+    def insert_attack_judge_result_to_db(self, technical_point):
+        try:
+            insert_data = (technical_point, self.get_current_date())
+            self.sql.insert(self.sql.conn, self.sql.state_insert_judge_attack_result, insert_data)
+        except Exception as e:
+            self.print_exception(e, 'Could not insert attack judge result.')
+
+    # Select latest one record from judge attack table.
+    def get_technical_point(self):
+        cur = self.sql.select(self.sql.conn, self.sql.state_select_judge_attack_result, ())
+        return cur.fetchone()

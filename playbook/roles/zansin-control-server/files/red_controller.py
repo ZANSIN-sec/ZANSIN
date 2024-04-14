@@ -2,14 +2,18 @@
 Implement a controller for the red modules (attack tool, crawler, judge) like the ZANSIN command.
 """
 import os
+import socket
+import random
+import sys
 import threading
 import configparser
+import sqlite3
 from datetime import datetime, timedelta
 from docopt import docopt
 
-from crawler.crawler_controller import crawler_execution
-from zansin_atk.atk_controller import atk_execution
-from zansinjudgepy.judge_controller import judge_execution_zansin_atk, judge_execution_crawler, display_score
+from crawler.crawler_controller import crawler_execution, get_judge_crawler_result
+from attack.attack_controller import attack_execution
+from judge.judge_controller import judge_execution_attack
 
 
 # Display banner.
@@ -30,36 +34,64 @@ def show_banner():
 # Define command option.
 __doc__ = """{f}
 usage:
-    {f} -n <name> -t <training-server-ip> -c <control-server-ip> -p <control-server-port> -a <attack-scenario>
+    {f} -n <name> -t <training-server-ip> -c <control-server-ip> -a <attack-scenario>
     {f} -h | --help
 options:
     -n <name>                 : Leaner name (e.g., Taro Zansin).
     -t <training-server-ip>   : ZANSIN Training Machine's IP Address (e.g., 192.168.0.5).
     -c <control-server-ip>    : ZANSIN Control Server's IP Address (e.g., 192.168.0.6).
-    -p <control-server-port>  : ZANSIN Control Server's Port Number (e.g., 8080).
     -a <attack-scenario>      : Attack Scenario Number (e.g., 1).
     -h --help Show this help message and exit.
 """.format(f=__file__)
 
 
+# Finding free high port for attack.
+def find_free_high_port(control_server_ip, max_num_finding_high_port):
+    for _ in range(max_num_finding_high_port):
+        port = random.randint(1025, 65535)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            res = s.connect_ex((control_server_ip, port))
+            if res != 0:
+                return port
+    return None
+
+
 # Calling the Crawler.
 def execute_crawler(learner_name, target_host, start_time, end_time, user_agent):
     crawler_execution(learner_name, target_host, start_time, end_time, user_agent)
+    return
 
 
 # Calling the Attack tool.
 def execute_attack_tool(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent):
-    atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent)
+    attack_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent)
+
+
+# Judge technical point against attack.
+def judge_attack(target_host_ip):
+    return judge_execution_attack(target_host_ip)
+
+
+# Judge crawler point (operation ratio) against crawler.
+def judge_crawler(learner_name):
+    return get_judge_crawler_result(learner_name)
+
+
+# Display score.
+def display_score(technical_point, operation_ratio):
+    print_score = '''
+    +----------------------------------+----------------------------------+
+    | Technical Point (Max 100 point)  | Operation Ratio (Max 100 %)      |
+    |----------------------------------+----------------------------------+
+    | Your Score : {} point            | Your Operation Ratio : {} %      |
+    +----------------------------------+----------------------------------+
+    '''
+    print(print_score.format(technical_point, operation_ratio))
 
 
 # Calling the Judge and Display score.
-def execute_judge(target_host_ip, arg_leaner, crawler_db):
-    display_score(judge_execution_zansin_atk(target_host_ip), judge_execution_crawler(arg_leaner, crawler_db))
-
-
-# Delete table records of attack tool.
-def delete_table_attack_tool():
-    print('Delete attack tool table!!')
+def execute_judge(target_host_ip, leaner_name):
+    display_score(judge_attack(target_host_ip), judge_crawler(leaner_name))
 
 
 def get_training_time(training_hours: int = 4) -> str:
@@ -82,18 +114,20 @@ if __name__ == '__main__':
         arg_leaner = args['-n']
         arg_training_server_ip = args['-t']
         arg_control_server_ip = args['-c']
-        arg_control_server_port = args['-p']
         arg_attack_scenario = int(args['-a'])
 
-        # Read atk_config.ini.
+        # Read config.ini.
         config = configparser.ConfigParser()
         config.read(os.path.join(full_path, 'config.ini'), encoding='utf-8')
-        crawler_db_path = config['Crawler']['crawler_game_status_db_path']
-        crawler_db_file_name = config['Crawler']['crawler_game_status_db_file']
-        crawler_db = os.path.join(full_path, crawler_db_path, crawler_db_file_name.format(arg_leaner))
 
         # Show banner.
         show_banner()
+
+        # Find free high port for attack.
+        control_server_port = find_free_high_port(arg_control_server_ip,
+                                                  int(config['Common']['max_num_finding_high_port']))
+        if control_server_port is None:
+            raise Exception('There are no available TCP ports on this server.')
 
         # Get training time.
         start_time, end_time = get_training_time(int(config['Common']['training_hours']))
@@ -106,7 +140,7 @@ if __name__ == '__main__':
                                                                         config['Common']['user-agent']))
         thread_attack_tool = threading.Thread(target=execute_attack_tool, args=(arg_training_server_ip,
                                                                                 arg_control_server_ip,
-                                                                                arg_control_server_port,
+                                                                                control_server_port,
                                                                                 arg_attack_scenario,
                                                                                 config['Common']['user-agent']))
 
@@ -119,10 +153,7 @@ if __name__ == '__main__':
         thread_attack_tool.join()
 
         # Execute Judge.
-        execute_judge(arg_training_server_ip, arg_leaner, crawler_db)
-
-        # Delete records of attack tool (Crawler's table is deleted at the beginning of the game by crawler).
-        delete_table_attack_tool()
+        execute_judge(arg_training_server_ip, arg_leaner)
     except Exception as e:
         print(e.args)
-
+        sys.exit()
