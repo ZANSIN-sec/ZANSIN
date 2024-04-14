@@ -8,7 +8,7 @@ To enable repeated exercise, let's take a snapshot of the current machines if yo
 
 ### ZANSIN Control Server
 
-TBD
+- Log in to the Control Server via SSH using the credential `zansin`/`Passw0rd!23`.
 
 ### ZANSIN Training Machine
 
@@ -25,13 +25,14 @@ Once you have prepared the ZANSIN Control Server and the ZANSIN Training Machine
 Red Controller is executed using "red_controller_venv", a Python virtual environment for ZANSIN. So, activate the Red controller virtual environment by executing the following command.
 
 ```bash
-source red_controller_zansin_venv/bin/activate
+zansin@hostname:~$ source red-controller/red_controller_venv/bin/activate
+(red_controller_venv) zansin@hostname:~$ 
 ```
 
 > [!NOTE]
 > Once you have finished the exercise, deactivate the virtual environment by executing the following command.
 >```bash
->deactivate
+>(red_controller_venv) zansin@hostname:~$ deactivate
 >```
 
 #### Execute Red Controller
@@ -39,6 +40,8 @@ source red_controller_zansin_venv/bin/activate
 You execute Red Controller with the following command options.
 
 ```bash
+(red_controller_venv) zansin@hostname:~$ cd red-controller/
+(red_controller_venv) zansin@hostname:~/red-controller$ python3 red_controller.py -h
 usage:
     red_controller.py -n <name> -t <training-server-ip> -c <control-server-ip> -p <control-server-port> -a <attack-scenario>
     red_controller.py -h | --help
@@ -54,7 +57,7 @@ options:
 An example of executing **Red Controller** is shown below.
 
 ```bash
-python3 playbook/roles/zansin-control-server/files/red_controller.py -n first_learner -t 192.168.0.5 -c 192.168.0.6 -p 8080 -a 1
+(red_controller_venv) zansin@hostname:~/red-controller$ python3 red_controller.py -n first_learner -t 192.168.0.5 -c 192.168.0.6 -p 8080 -a 1
 ```
 By the way, the option `-a` (attack scenario) specifies the attack scenario number to be used for exercise.  
 The current version of ZANSIN provides the following attack scenarios, so you can choose your favorite scenario for your enjoyment!
