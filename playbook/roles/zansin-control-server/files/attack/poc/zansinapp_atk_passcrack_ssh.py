@@ -4,11 +4,9 @@ import os
 import base64
 import paramiko
 
-
 class AtkPassCrackSSH(object):
     def __init__(self, utility, host="127.0.0.1", port=22, debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
         self.debug = debug
@@ -19,6 +17,7 @@ class AtkPassCrackSSH(object):
         return 'AtkPassCrackSSH object (target: %s:%d, description: %s)' % (self.host, self.port, self.description)
 
     __repr__ = __str__
+
 
     def sendattack(self, user="user"):
         # Read password.txt.
@@ -57,6 +56,7 @@ class AtkPassCrackSSH(object):
                 #self.logger("May be Auth failed?", "!")
                 continue
 
+                
     def logger(self, m="", o="+"):
         message = "[{}] {}".format(o,m)
         print(message)

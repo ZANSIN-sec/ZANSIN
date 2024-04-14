@@ -1,4 +1,7 @@
 #!/bin/bash
 # for debug
-#sudo carton exec perl ./tools/c2s/c2dns.pl &
-sudo carton exec perl ./tools/c2s/c2dns.pl > /dev/null 2>&1 &
+#cd attack && sudo carton exec perl -Itools/c2s ./tools/c2s/c2dns.pl $1
+#cd attack && sudo carton exec perl -Itools/c2s ./tools/c2s/c2dns.pl $1 &
+
+cd attack && sudo carton exec perl -Itools/c2s ./tools/c2s/c2dns.pl $1 > /dev/null 2>&1 &
+reset

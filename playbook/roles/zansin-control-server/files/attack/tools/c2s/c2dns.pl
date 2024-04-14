@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use lib "./tools/c2s/";
 use config;
 use Net::DNS;
 use Net::DNS::Nameserver;
@@ -28,6 +27,7 @@ my $conf = config->new;
 
 my $parent_server = $conf->{parent};
 
+$host = shift(@ARGV) || $host;
 my @opt = @ARGV;
 
 #if(defined($opt[0]) && $opt[0] eq 'init'){
@@ -89,7 +89,6 @@ sub reply_handler {
   $query->print;
 
   
-  #if ( $qtype eq "A" && $qname eq "zansin.example.com" ) {
   if ( $qtype eq "A" && exists($conf->{record}->{$qname}) ) {
     my ( $ttl, $rdata ) = ( 3600, $conf->{record}->{$qname} ); # sample
     my $rr = new Net::DNS::RR("$qname $ttl $qclass $qtype $rdata");
@@ -144,17 +143,18 @@ sub reply_handler {
   return ( $rcode, \@ans, \@auth, \@add, $headermask, $optionmask );
 }
 
- 
 my $ns = new Net::DNS::Nameserver(
     LocalAddr => $host,
     LocalPort    => $port,
     ReplyHandler => \&reply_handler,
-    Verbose      => 1
+    Verbose      => 0,
     ) || die "couldn't create nameserver object\n";
  
  
-$ns->start_server($working_time_sec);
-#$ns->main_loop;
+    $ns->start_server($working_time_sec);
+    #sleep 5;
+    #$ns->stop_server();
+    #$ns->main_loop;
 
 exit;
 

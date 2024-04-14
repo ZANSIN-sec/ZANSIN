@@ -1,17 +1,13 @@
 #!/usr/bin/env python
 # coding: UTF-8
-# usage: zansinapp_atk_docker_api.py <rhost>:<rport> <base64data([execute command])>
-#    ex: zansinpp_atk_docker_api.py 192.168.0.1:2375 Y2F0IC9ldGMvcGFzc3dk
 import requests
 import json
 import sys
 import base64
 
-
 class AtkDockerApi(object):
     def __init__(self, utility, host="127.0.0.1", port="2375", debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
         self.debug = debug
@@ -99,11 +95,13 @@ class AtkDockerApi(object):
             print(response6.text)
 
             self.logger("Attack Complete!!", "+")
+            return True
 
         except requests.exceptions.RequestException as e:
             self.logger("Error occurred", "!")
             file=sys.stderr
             print(e)
+            return False
             #sys.exit(1)
 
     def logger(self, m="", o="+"):
