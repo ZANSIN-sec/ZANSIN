@@ -68,7 +68,7 @@ class Utility:
 
             
         except Exception as e:
-            self.print_message(FAIL, 'Reading attackattack_config.ini is failure : {}'.format(e))
+            self.print_message(FAIL, 'Reading attack_config.ini is failure : {}'.format(e))
             sys.exit(1)
 
         # Initialize http session object.
