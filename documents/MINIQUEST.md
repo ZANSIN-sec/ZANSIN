@@ -40,7 +40,7 @@ Please perform fixing vulnerabilities and incident response during the 4-hour pe
 # Exercise Environment
 
 The structure of the online game server is as follows:
-Various APIs are implemented using Docker within the ZANSIN Training Machine.
+Various APIs are implemented using Docker within a single Linux Server.
 
 ![Environment](../images/ffab4829c784d1661a4e16e3a519b740a2769823.png)
 
