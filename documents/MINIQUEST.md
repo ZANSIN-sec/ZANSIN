@@ -33,11 +33,11 @@ In this exercise, the ZANSIN Scoring Module will evaluate whether the root cause
 
 Therefore, rather than resorting to ad hoc measures against cyberattacks or in-game cheating, let's concentrate on addressing vulnerabilities.
 
-The attacks in the excercise will conclude in **4 hours**. 
+The attacks in the exercise will conclude in **4 hours**. 
 
 Please perform fixing vulnerabilities and incident response during the 4-hour period since the exercise began, striving to achieve a high score.
 
-# Excercise Environment
+# Exercise Environment
 
 The structure of the online game server is as follows:
 Various APIs are implemented using Docker within the ZANSIN Training Machine.
