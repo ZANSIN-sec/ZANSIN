@@ -74,6 +74,38 @@ sshpass -p "Passw0rd!23" ssh -o StrictHostKeyChecking=no "vendor@$training_ip" <
   docker-compose up -d
 EOF
 
+# Set up Red Controller
+# Check if python3 and pip3 are installed, install if not
+deploy_status "Checking for Python3 and pip3 for ZANSIN Red Controller..." $YELLOW
+RED_CONTROLLER_PYTHON3_INSTALLED=$(command -v python3.10)
+RED_CONTROLLER_PIP3_INSTALLED=$(command -v pip3)
+if [[ -z "RED_CONTROLLER_PYTHON3_INSTALLED" ]]; then
+    deploy_status "Python3 not found. Installing Python3.10 for ZANSIN Red Controller..." $RED
+    sudo apt update && sudo apt install -y python3.10 python3.10-venv python3.10-dev
+fi
+if [[ -z "$RED_CONTROLLER_PIP3_INSTALLED" ]]; then
+    deploy_status "pip3 not found. Installing pip3 for ZANSIN Red Controller..." $RED
+    sudo apt update && sudo apt install -y python3-pip
+fi
+
+# Set virtual environment path for Red Controller
+RED_CONTROLLER_VENV_PATH="red_controller_venv"
+
+# Activate "red_controller_venv"
+deploy_status "Setting up virtual environment for ZANSIN Red Controller..." $YELLOW
+python3.10 -m venv RED_CONTROLLER_VENV_PATH
+source $RED_CONTROLLER_VENV_PATH/bin/activate
+
+# Set environment variable for requirements.txt
+export RED_CONTROLLER_VENV_PATH_REQUIREMENTS_PATH="playbook/roles/zansin-control-server/files/requirements.txt"
+
+# Install required Python packages from requirements.txt
+deploy_status "Installing required Python packages for ZANSIN Red Controller..." $YELLOW
+pip3 install -r RED_CONTROLLER_VENV_PATH_REQUIREMENTS_PATH
+
+# Deactivate "red_controller_venv"
+deactivate
+
 deploy_status "ZANSIN services setup complete!" $GREEN
 
 # Stop displaying ZANSIN

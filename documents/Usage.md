@@ -18,7 +18,25 @@ TBD
 
 ### Start the exercise
 
-Once you have prepared the ZANSIN Control Server and the ZANSIN Training Machine, execute the `Red Controller` to start the exercise! Note that the **Red Controller** is responsible for crawling and attacking the ZANSIN Training Machine. Therefore, it must be executed with the following command options.
+Once you have prepared the ZANSIN Control Server and the ZANSIN Training Machine, execute the `Red Controller` to start the exercise! Note that the **Red Controller** is responsible for crawling and attacking the ZANSIN Training Machine.
+
+#### Activate Virtual Environment
+
+Red Controller is executed using "red_controller_venv", a Python virtual environment for ZANSIN. So, activate the Red controller virtual environment by executing the following command.
+
+```bash
+source red_controller_zansin_venv/bin/activate
+```
+
+> [!NOTE]
+> Once you have finished the exercise, deactivate the virtual environment by executing the following command.
+>```bash
+>deactivate
+>```
+
+#### Execute Red Controller
+
+You execute Red Controller with the following command options.
 
 ```bash
 usage:
