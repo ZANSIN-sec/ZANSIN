@@ -79,6 +79,8 @@ RED_CONTROLLER_LOCAL_PATH="./roles/zansin-control-server/files/"
 RED_CONTROLLER_REMOTE_PATH="/home/zansin/red-controller"
 RED_CONTROLLER_VENV_PATH="red_controller_venv"
 RED_CONTROLLER_VENV_PATH_REQUIREMENTS_PATH="$RED_CONTROLLER_REMOTE_PATH/requirements.txt"
+RED_CONTROLLER_ATTACK_CPANFILE_PATH="$RED_CONTROLLER_REMOTE_PATH/attack/cpanfile"
+RED_CONTROLLER_ATTACK_C2S_PATH="$RED_CONTROLLER_REMOTE_PATH/attack/tools/c2s/start_c2s.sh"
 
 # Ensure the remote directory exists
 sshpass -p "$current_password" ssh -o StrictHostKeyChecking=no "zansin@${control_ip}" "mkdir -p $RED_CONTROLLER_REMOTE_PATH"
@@ -88,8 +90,16 @@ sshpass -p "$current_password" rsync -avz -e "ssh -o StrictHostKeyChecking=no" $
 
 # Execute commands on the remote server
 sshpass -p "$current_password" ssh -t "zansin@${control_ip}" << EOF
+  while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+    echo "Waiting for other software managers to finish..."
+    sleep 10
+  done
   echo "$current_password" | sudo -S apt-get update
   echo "$current_password" | sudo -S apt-get install -y python3.10 python3.10-venv python3.10-dev python3-pip
+  echo "$current_password" | sudo -S apt install -y carton nmap nikto
+  echo "$current_password" | sudo -S apt install make build-essential
+  echo "$current_password" | sudo -S carton install --cpanfile $RED_CONTROLLER_ATTACK_CPANFILE_PATH
+  chmod +x $RED_CONTROLLER_ATTACK_C2S_PATH
   cd $RED_CONTROLLER_REMOTE_PATH
   python3.10 -m venv $RED_CONTROLLER_VENV_PATH
   source $RED_CONTROLLER_VENV_PATH/bin/activate
