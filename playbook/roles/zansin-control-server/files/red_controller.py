@@ -59,7 +59,6 @@ def find_free_high_port(control_server_ip, max_num_finding_high_port):
 # Calling the Crawler.
 def execute_crawler(learner_name, target_host, start_time, end_time, user_agent):
     crawler_execution(learner_name, target_host, start_time, end_time, user_agent)
-    return
 
 
 # Calling the Attack tool.
