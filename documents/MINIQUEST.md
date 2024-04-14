@@ -18,7 +18,9 @@ Inspired by Japan's immensely popular role-playing game that debuted in 1986, mo
 
 # Mission
 
-When initiating this excercise, cyber attacks and game cheating behaviors will be directed towards the online game servers that you must manage.
+Your mission during this exercise is to ensure the stable operation of this game system and strive to generate revenue.
+
+However, cyber attacks and game cheating behaviors will be directed towards the online game servers that you must manage.
 
 In an online game where cyber attacks and cheating behaviors are prevalent, such as data tampering on the online game server, service interruptions, and frequent cheating incidents, legitimate users decrease, resulting in an inability to generate profits.
 
