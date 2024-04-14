@@ -20,10 +20,10 @@ This comprehensive approach allows learners to actively apply security measures,
 
 - [Installation](./documents/Installation.md)
 
-## Play Scenario
+## Exercise
 
-- [Scenario - MINI QUEST](./documents/MINIQUEST.md)
-- [Usage](./documents/Usage.md)
+- [Exercise - MINI QUEST](./documents/MINIQUEST.md)
+- [Start Exercise](./documents/Usage.md)
 
 ## Excesise Explanation
 
