@@ -83,7 +83,7 @@ FLAG_CHECK_SSH         = True
 FLAG_CHECK_RECOVERY    = False
 
 
-# Judge technical points against attackattack.
+# Judge technical points against attack.
 def judge_execution_attack(target_host_ip):
     score = 0.0
     debug = False
