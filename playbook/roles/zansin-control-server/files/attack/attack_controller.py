@@ -7,7 +7,7 @@
 # source ./venv/bin/activate
 # pip3 install -r requirements.txt
 # for vscode: View->Command Palette->set `Python: Select Interpreter`
-# python attackattack_controller.py 192.168.159.131 192.168.10.222 42375
+# python attack_controller.py 192.168.159.131 192.168.10.222 42375
 # Logo: ANSI Shadow at https://manytools.org/hacker-tools/ascii-banner/
 import os
 import sys
