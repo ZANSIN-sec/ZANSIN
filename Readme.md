@@ -16,10 +16,9 @@ This comprehensive approach allows learners to actively apply security measures,
 
 - [System Overview](./documents/SystemOverview.md)
 
-## Deploymentation
+## Installation
 
-- [Requirements](./documents/Requirements.md)
-- [Deploymentation](./documents/Deploymentation.md)
+- [Installation](./documents/Installation.md)
 
 ## Play Scenario
 
