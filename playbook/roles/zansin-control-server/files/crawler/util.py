@@ -864,3 +864,16 @@ class Utilty:
         except Exception as e:
             self.print_exception(e, 'Accessing is failure : {}'.format(target_url))
             return False, {}
+
+    # Select all records from user game status table related learner name.
+    def get_operation_ratio(self, learner_name):
+        cur = self.sql.select(self.sql.conn, self.sql.state_select_error_status, (learner_name,))
+        results = cur.fetchall()
+
+        # Calculate operation ratio.
+        total_epoch = 0
+        normal_operation_num = 0
+        for result in results:
+            total_epoch += 1
+            normal_operation_num += 1 if result[0] == 0 else 0
+        return normal_operation_num / total_epoch * 100

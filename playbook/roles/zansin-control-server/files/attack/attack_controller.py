@@ -7,7 +7,7 @@
 # source ./venv/bin/activate
 # pip3 install -r requirements.txt
 # for vscode: View->Command Palette->set `Python: Select Interpreter`
-# python atk_controller.py 192.168.159.131 192.168.10.222 42375
+# python attack_controller.py 192.168.159.131 192.168.10.222 42375
 # Logo: ANSI Shadow at https://manytools.org/hacker-tools/ascii-banner/
 import os
 import sys
@@ -107,7 +107,7 @@ def wrap_text(type, text):
         return text
 
 
-def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent):
+def attack_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent):
     debug = False
 
     target = "127.0.0.1"

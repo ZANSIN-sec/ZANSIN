@@ -5,7 +5,6 @@ import sys
 import time
 import codecs
 import threading
-from docopt import docopt
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from .util import Utilty
@@ -46,20 +45,6 @@ def show_credit(utility):
 + -- --=[ https://github.com/ZANSIN-sec/ZANSIN/ ]=--
     """
     utility.print_message(NONE, credit)
-
-
-# Define command option.
-__doc__ = """{f}
-usage:
-    {f} -t <team> | --team=<team> [--delete-db] [--debug] [--english] [--game] [--corp] [--repo]
-    {f} -h | --help
-options:
-    -t Require     : Playing team (e.g., team-a, team-b, ... , team-y, team-z).
-    --delete-db    : Delete local db (sqlite3/minih_v4.db).
-    --english      : Specify abroad event.
-    --debug        : It is test mode.
-    -h --help Show this help message and exit.
-""".format(f=__file__)
 
 
 def is_valid_training_time(start_time, end_time):
@@ -218,6 +203,13 @@ def play_game(utility, learner_name, start_time, end_time):
         utility.print_message(NOTE, f'Epoch {epochs}: {learner_name} End Game!!')
         time.sleep(waiting_time / utility.loop_delay_rate)
         epochs += 1
+
+
+# Get judge result of crawler.
+def get_judge_crawler_result(learner_name):
+    utility = Utilty(learner_name, '', '')
+    utility.sql = DbControl(utility)
+    return utility.get_operation_ratio(learner_name)
 
 
 # main.

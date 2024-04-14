@@ -40,7 +40,7 @@ class Utility:
         # Read config.inpyti.
         full_path = os.path.dirname(os.path.abspath(__file__))
         config = configparser.ConfigParser()
-        config.read(os.path.join(full_path, 'atk_config.ini'), encoding='utf-8')
+        config.read(os.path.join(full_path, 'attack_config.ini'), encoding='utf-8')
 
         try:
             #self.team_name = team_name
@@ -68,7 +68,7 @@ class Utility:
 
             
         except Exception as e:
-            self.print_message(FAIL, 'Reading atk_config.ini is failure : {}'.format(e))
+            self.print_message(FAIL, 'Reading attack_config.ini is failure : {}'.format(e))
             sys.exit(1)
 
         # Initialize http session object.

@@ -10,7 +10,7 @@ import os
 import sys
 import time
 from .util import Utility
-from .zansinjudgepy_sql import DbControl
+from .judge_sql import DbControl
 from .modules.checkban import CheckBan
 from .modules.checklogin import CheckLogin
 from .modules.checkplayer import CheckPlayerInfo
@@ -56,6 +56,11 @@ def show_credit(utility):
     utility.print_message(NONE, credit)
 
 
+# Get judge result of attack.
+def get_judge_attack_result(utility):
+    return utility.get_technical_point()
+
+
 OK_BLUE = '\033[94m'      # [*]
 NOTE_GREEN = '\033[92m'   # [+]
 FAIL_RED = '\033[91m'     # [-]
@@ -78,8 +83,8 @@ FLAG_CHECK_SSH         = True
 FLAG_CHECK_RECOVERY    = False
 
 
-# Judge technical points against zansin_atk.
-def judge_execution_zansin_atk(target_host_ip):
+# Judge technical points against attack.
+def judge_execution_attack(target_host_ip):
     score = 0.0
     debug = False
 
@@ -87,7 +92,11 @@ def judge_execution_zansin_atk(target_host_ip):
 
     utility = Utility(target)
     show_banner(utility)
-    
+
+    # Initialize Database.
+    sql = DbControl(utility)
+    utility.sql = sql
+
     #===========================================================================
     # Ensure check the Login function
     #===========================================================================
@@ -321,36 +330,8 @@ def judge_execution_zansin_atk(target_host_ip):
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckSSH NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
 
-    return score / utility.point_max * 100
+    # Insert technical point to judge db.
+    utility.insert_attack_judge_result_to_db(score / utility.point_max * 100)
 
-
-# Judge crawler point (operation ratio) against crawler.
-def judge_execution_crawler(learner_name, crawler_db_path):
-    # Create DB connection.
-    utility = Utility()
-    sql = DbControl(utility)
-
-    # Select all records from user game status table related learner name.
-    cur = sql.select(sql.create_db_connection(crawler_db_path), sql.state_select_all_game_status, (learner_name,))
-    results = cur.fetchall()
-
-    # Calculate operation ratio.
-    total_epoch = 0
-    normal_operation_num = 0
-    for result in results:
-        total_epoch += 1
-        normal_operation_num += 1 if result[0] == 0 else 0
-    return normal_operation_num / total_epoch * 100
-
-
-# Display score.
-def display_score(technical_point, operation_ratio):
-    utility = Utility()
-    print_score = '''
-    +----------------------------------+----------------------------------+
-    | Technical Point (Max 100 point)  | Operation Ratio (Max 100 %)      |
-    |----------------------------------+----------------------------------+
-    | Your Score : {} point            | Your Operation Ratio : {} %      |
-    +----------------------------------+----------------------------------+
-    '''
-    utility.print_message(utility.none, print_score.format(technical_point, operation_ratio))
+    # Get judge result of attack (technical point).
+    return get_judge_attack_result(utility)
