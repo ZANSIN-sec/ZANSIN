@@ -1,0 +1,7 @@
+local/*
+tools/c2s/cmd/*.cmd
+__pycache__/*
+poc/__pycache__/*
+tools/c2s/cmd/__pycache__/*
+venv/*
+cpanfile.snapshot

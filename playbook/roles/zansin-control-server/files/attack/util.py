@@ -28,14 +28,20 @@ FAIL = 'fail'     # [-]
 WARNING = 'warn'  # [!]
 NONE = 'none'     # No label.
 
+class Scenraio:
+    def __init__(self, waittime, scenario, option):
+        self.scenario = scenario
+        self.waittime = waittime
+        self.option = option
 
 # Utility class.
 class Utility:
-    def __init__(self, target=None, team_name=None, debug=False):
+    def __init__(self, target=None, ua="atk", scenario=0, debug=False):
         self.file_name = os.path.basename(__file__)
         self.full_path = os.path.dirname(os.path.abspath(__file__))
 
         self.target = target
+        self.ua = ua
 
         # Read config.inpyti.
         full_path = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +53,7 @@ class Utility:
             # Common
             self.reverseshellport = config['Common']['reverse_shell_port']
             self.banner_delay = float(config['Common']['banner_delay'])
-            self.ua = config['Common']['user-agent']
+            #self.ua = config['Common']['user-agent']
             #self.request_schema = config['Common']['request_schema']
             #self.con_timeout = float(config['Common']['con_timeout'])
             self.report_date_format = config['Common']['date_format']
@@ -64,6 +70,16 @@ class Utility:
             #self.log_dir = os.path.join(full_path, config['Common']['log_path'])
             #self.log_file = config['Common']['log_file'].format(self.target)
             #self.log_path = os.path.join(self.log_dir, self.log_file)
+            self.scenario = scenario
+
+            self.scenario_list = []
+            for i in range(1, 1000):
+                scenario_name = str(self.scenario) + '-' + str("%03d" % i)
+                #print(config['Scenario'][scenario_name])
+                if scenario_name in config['Scenario']:
+                    options = str.split(config['Scenario'][scenario_name], '@')
+                    s = Scenraio(int(options[0]), options[1], options[2])
+                    self.scenario_list.append(s)
 
 
             
@@ -216,8 +232,9 @@ class Utility:
     def add_c2cmd(self, target, cmd):     
         try:
             filename = target + ".cmd"
-            with open("tools/c2s/cmd/" + filename, 'wb') as f11:
-                f11.write("1\t" + cmd + "\n")
+            with open(os.path.join(self.full_path, "tools/c2s/cmd/" + filename), 'wb') as f11:
+                buildcmd = "1\t" + cmd + "\n"
+                f11.write(buildcmd.encode())
         except Exception as e:
             self.print_exception(e, 'Failed to generate %s file.' % filename)
     

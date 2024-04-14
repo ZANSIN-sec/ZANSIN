@@ -13,7 +13,6 @@ if len(args) != 3:
 host = args[1]
 port = args[2]
 
-
 async def stopserver(request):
     print("======== Stop WebServer ========")
     raise GracefulExit()
@@ -21,7 +20,7 @@ async def stopserver(request):
 app = web.Application()
 app.add_routes([
     web.get('/stopserver', stopserver),
-    web.static('/', path=str(Path.cwd().joinpath('public')), show_index=False)
+    web.static('/', path=str(Path.cwd().joinpath('attack/public')), show_index=False)
     ])
 
 if __name__ == '__main__':

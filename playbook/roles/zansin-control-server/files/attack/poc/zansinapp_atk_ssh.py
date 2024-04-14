@@ -3,11 +3,9 @@
 import base64
 import paramiko
 
-
 class AtkSSH(object):
     def __init__(self, utility, host="127.0.0.1", port=22, debug=False):
         self.utility = utility
-        self.utility.target = host
         self.host = host
         self.port = port
         self.debug = debug

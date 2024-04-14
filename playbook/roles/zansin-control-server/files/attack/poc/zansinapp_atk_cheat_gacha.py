@@ -16,12 +16,10 @@ proxies = {"http": None,"https": None}
 #connect timeout, read timeout
 timeoutvalue= (5.0, 5.5)
 
-
 def randomstr(n):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
 
-
-def new_user(target):
+def new_user(target, ua="atk"):
     session = requests.Session()
     set_id = hashlib.sha256(urandom(10)).hexdigest()
     set_password = urandom(10).hex()
@@ -29,7 +27,7 @@ def new_user(target):
     set_nickname = "Tetsuzo" + "_" + nickname_token
 
     json_data = { "user_name": set_id, "password": set_password, "nick_name": set_nickname}      
-    headers = { "Content-Type": "application/json" }
+    headers = { "Content-Type": "application/json", "User-Agent": ua }
     target_url = "http://" + target + "/create"
     response1 = session.post(target_url, data=json.dumps(json_data), headers=headers, proxies=proxies, timeout=timeoutvalue)
 
@@ -48,7 +46,6 @@ def new_user(target):
     # print("Status code:   %i" % response2.status_code)
     # print("Response body: %s" % response2.text)
     return session
-
 
 def main():
     sr_count = 0
@@ -69,10 +66,15 @@ def main():
         return
     count = int(argv[3])
 
+    if not argv[4]:
+        print('UserAgent must be specified.')
+        return
+    ua = argv[4]
+
     #=====================================================================
     # Create user and Login
     #=====================================================================
-    session = new_user(target)
+    session = new_user(target, ua)
 
     #=====================================================================
     # Start Gacha cheat
@@ -89,8 +91,8 @@ def main():
         # print('Supoer Rare count:', sr_count)
 
         try:
-            json_data = { "gold": 0 }      
-            headers = { "Content-Type": "application/json" }
+            json_data = { "gold": 0 }
+            headers = { "Content-Type": "application/json", "User-Agent": ua }
             target_url = "http://" + target + "/gacha"
             response = session.post(target_url, data=json.dumps(json_data), headers=headers, proxies=proxies, timeout=timeoutvalue)
             ret = json.loads(response.text)
