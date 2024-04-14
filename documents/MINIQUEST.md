@@ -18,7 +18,7 @@ Inspired by Japan's immensely popular role-playing game that debuted in 1986, mo
 
 # Mission
 
-When initiating this scenario, cyber attacks and game cheating behaviors will be directed towards the online game servers that you must manage.
+When initiating this excercise, cyber attacks and game cheating behaviors will be directed towards the online game servers that you must manage.
 
 In an online game where cyber attacks and cheating behaviors are prevalent, such as data tampering on the online game server, service interruptions, and frequent cheating incidents, legitimate users decrease, resulting in an inability to generate profits.
 
@@ -27,14 +27,18 @@ You must rigorously implement the following to consistently generate revenue:
 - Protect the server from cyber attacks.
 - Safeguard the game from cheating behaviors.
 
-This attack scenario will conclude in **4 hours**. 
+In this exercise, the ZANSIN Scoring Module will evaluate whether the root causes of vulnerabilities on the server have been addressed. 
 
-Therefore, please perform fixing vulnerabilities and incident response during the 4-hour period since the exercise began, striving to achieve a high score.
+Therefore, rather than resorting to ad hoc measures against cyberattacks or in-game cheating, let's concentrate on addressing vulnerabilities.
 
-# Scenario Environment
+The attacks in the excercise will conclude in **4 hours**. 
+
+Please perform fixing vulnerabilities and incident response during the 4-hour period since the exercise began, striving to achieve a high score.
+
+# Excercise Environment
 
 The structure of the online game server is as follows:
-Various APIs are implemented using Docker within a single Ubuntu Linux instance.
+Various APIs are implemented using Docker within the ZANSIN Training Machine.
 
 ![Environment](../images/ffab4829c784d1661a4e16e3a519b740a2769823.png)
 
@@ -115,7 +119,7 @@ As this page is a public page, it should be accessible to everyone.
 
 - Game API
   - You can fined the source code in the folloing path;
-    - `/home/vendor/mini4-game-api-php`
+    - `/home/vendor/game-api`
   - If you want to up / down the containers for Game APIs, please see the below;
     - Start the containers
       - `docker-compose up -d`
@@ -125,10 +129,10 @@ As this page is a public page, it should be accessible to everyone.
 
 # Prohibited Actions
 
-- Access Control
-  - Don't block connections from the ZANSIN Control Server based on the source IP address or tcp/udp port using Firewall etc.
-    - Connections as both legitimate users and attackers are sent from the ZANSIN Controll Server.
-    - If you block that, the ZANSIN Crawling Module and Scoring Module cannot access your service, then unnable to evaluate your score.
-- API
-  - Don't change the structure of JSON in API response.
-    - You can modify or remove values in API response, but don't change keys because the ZANSIN Crawing Module will not be able to get the response.
+- **Access Control**
+  - Avoid blocking connections from the ZANSIN Control Server based on the source IP address. 
+    - Both legitimate user and attacker connections originate from the same IP address of the ZANSIN Control Server. Blocking it would prevent access by the ZANSIN Crawling Module and Scoring Module to your service, rendering score evaluation impossible.
+    - Similarly, please be careful not to disrupt communication from both the ZANSIN Crawling Module and ZANSIN Scoring Module, as this could results in decreased revenue for the game server and inaccurate evaluations.
+- **API**
+  - Maintain the JSON structure in the API response.
+    - You may modify or remove values in the API responses, but refrain from altering keys as this would hinder the ZANSIN Crawling Module's ability to retrieve the response.
