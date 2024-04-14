@@ -1,11 +1,4 @@
-- [Requirements](#requirements)
-- [Linux Installation](#linux-installation)
-  - [Creating ZANSIN user](#creating-zansin-user)
-  - [Installing OpenSSH](#installing-openssh)
-- [ZANSIN Deploymentation](#zansin-deploymentation)
-
-
-## Requirements
+# Requirements
 
 - **Ubuntu 20.04** Server or higher
 - Platform doesn't matter (physical environment, virtual environment, public cloud). 
@@ -20,7 +13,7 @@
 > When deploying a ZANSIN environment in a public cloud, it is strongly recommended to limit the source IP address in firewall inbound rules or expose only SSH. Otherwise, vulnerable servers will be exposed on the Internet.
 
 
-## Linux Installation
+# Linux Installation
 
 The example below assumes that you are installing Ubuntu Server 22.04.4 LTS on VirtualBox. 
 Since ZANSIN requires two Linux hosts, you will need to repeat this installation process twice.
@@ -33,7 +26,7 @@ Since ZANSIN requires two Linux hosts, you will need to repeat this installation
 
 If you were unable to create the user `zansin` or install OpenSSH during the Ubuntu installation process, execute the following commands after logging into Ubuntu.
 
-### Creating ZANSIN user
+## Creating ZANSIN user
 
 ```bash
 sudo useradd zansin
@@ -41,14 +34,14 @@ sudo usermod -aG sudo zansin
 echo "zansin:YOUR_PASSWORD" | sudo chpasswd
 ```
 
-### Installing OpenSSH
+## Installing OpenSSH
 
 ```bash
 sudo apt update
 sudo apt install openssh-server
 ```
 
-## ZANSIN Deploymentation
+# ZANSIN Deploymentation
 
 Prior to installing ZANSIN, you should verify the IP addresses of both machines.
 
