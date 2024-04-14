@@ -1,11 +1,9 @@
-# Installation
+- [Requirements](#requirements)
+- [Linux Installation](#linux-installation)
+  - [Creating ZANSIN user](#creating-zansin-user)
+  - [Installing OpenSSH](#installing-openssh)
+- [ZANSIN Deploymentation](#zansin-deploymentation)
 
-- [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Linux Installation](#linux-installation)
-    - [Creating ZANSIN user](#creating-zansin-user)
-    - [Installing OpenSSH](#installing-openssh)
-  - [ZANSIN Deploymentation](#zansin-deploymentation)
 
 ## Requirements
 
@@ -33,7 +31,7 @@ Since ZANSIN requires two Linux hosts, you will need to repeat this installation
    - In the SSH Setup screen, check the `Install OpenSSH Server`.
 2. After the installation, to enable easy connectivity between the virtual machines and internet access, use the "Bridged Adapter" for the Network Adapter setting.
 
-If you were unable to create the user 'zansin' or install OpenSSH during the Ubuntu installation process, execute the following commands after logging into Ubuntu.
+If you were unable to create the user `zansin` or install OpenSSH during the Ubuntu installation process, execute the following commands after logging into Ubuntu.
 
 ### Creating ZANSIN user
 
@@ -59,7 +57,7 @@ Prior to installing ZANSIN, you should verify the IP addresses of both machines.
 
 1. Log in to the ZANSIN Control Server using the `zansin` user.
 
-2. GDownload `zansin.sh` from the GitHub repository:
+2. Download `zansin.sh` from the GitHub repository:
 
     ```bash
     wget https://raw.githubusercontent.com/ZANSIN-sec/ZANSIN/main/zansin.sh
@@ -68,5 +66,5 @@ Prior to installing ZANSIN, you should verify the IP addresses of both machines.
 3. Give executable permission to `zansin.sh` and execute it:
     ```bash
     chmod +x zansin.sh
-    sudo ./zansin.sh
+    ./zansin.sh
     ```
