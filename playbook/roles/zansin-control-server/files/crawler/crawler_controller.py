@@ -7,7 +7,7 @@ import codecs
 import threading
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
-from .util import Utilty
+from .util import Utility
 from .crawler_sql import DbControl
 from .modules.player import Player
 from .constants import *
@@ -207,7 +207,7 @@ def play_game(utility, learner_name, start_time, end_time):
 
 # Get judge result of crawler.
 def get_judge_crawler_result(learner_name):
-    utility = Utilty(learner_name, '', '')
+    utility = Utility(learner_name, '', '')
     utility.sql = DbControl(utility)
     return utility.get_operation_ratio(learner_name)
 
@@ -215,7 +215,7 @@ def get_judge_crawler_result(learner_name):
 # main.
 def crawler_execution(learner_name, target_hostname, start_time, end_time, user_agent):
     # Create Utility instance.
-    utility = Utilty(learner_name, target_hostname, user_agent)
+    utility = Utility(learner_name, target_hostname, user_agent)
 
     # Initialize Database.
     sql = DbControl(utility)
