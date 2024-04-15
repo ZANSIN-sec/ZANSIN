@@ -13,7 +13,7 @@ from docopt import docopt
 
 from crawler.crawler_controller import crawler_execution, get_judge_crawler_result
 from attack.attack_controller import atk_execution
-from judge.judge_controller import judge_execution_attack, get_judge_attack_result
+from judge.judge_controller import get_judge_attack_result
 
 
 # Display banner.
@@ -69,7 +69,6 @@ def execute_attack_tool(target_host_ip, self_host_ip, self_host_port, attack_sce
 # Judge technical point against attack.
 def judge_attack(target_host_ip):
     # Evaluate technical point.
-    judge_execution_attack(target_host_ip)
     return get_judge_attack_result()
 
 
