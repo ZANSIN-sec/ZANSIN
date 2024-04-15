@@ -57,7 +57,9 @@ def show_credit(utility):
 
 
 # Get judge result of attack.
-def get_judge_attack_result(utility):
+def get_judge_attack_result():
+    utility = Utility()
+    utility.sql = DbControl(utility)
     return utility.get_technical_point()
 
 
@@ -120,7 +122,6 @@ def judge_execution_attack(target_host_ip):
         password = json_data["password"]
         session_id = json_data["session_id"]
 
-
     #===========================================================================
     # Ensure check BAN function of the web application
     #===========================================================================
@@ -135,7 +136,6 @@ def judge_execution_attack(target_host_ip):
             score += json_data["point"]
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckBan NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
-
 
     #===========================================================================
     # Ensure check Player Information Vulnerability
@@ -152,7 +152,6 @@ def judge_execution_attack(target_host_ip):
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckPlayerInfo NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
 
-
     #===========================================================================
     # Check Image Upload
     #===========================================================================
@@ -167,7 +166,6 @@ def judge_execution_attack(target_host_ip):
             score += json_data["point"]
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckImageUpload NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
-        
 
     #===========================================================================
     # Ensure check SQL Injection at Login function
@@ -184,8 +182,6 @@ def judge_execution_attack(target_host_ip):
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckLoginSQLi NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
 
-
-
     #===========================================================================
     # Ensure check SQL Injection at Create User function
     #===========================================================================
@@ -201,8 +197,6 @@ def judge_execution_attack(target_host_ip):
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckNewUserSQLi NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
 
-
-    
     #===========================================================================
     # Ensure check cheat at Gacha function
     #===========================================================================
@@ -217,7 +211,6 @@ def judge_execution_attack(target_host_ip):
             score += json_data["point"]
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckGacha NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
-
 
     #===========================================================================
     # Ensure check cheat at Recovery function
@@ -234,7 +227,6 @@ def judge_execution_attack(target_host_ip):
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckRecovery NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
 
-
     #===========================================================================
     # Ensure check the port of Docker API is currently open
     #===========================================================================
@@ -249,7 +241,6 @@ def judge_execution_attack(target_host_ip):
             score += json_data["point"]
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckDocker NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
-
 
     #===========================================================================
     # Ensure check the port of Debug API is currently open
@@ -298,7 +289,6 @@ def judge_execution_attack(target_host_ip):
         utility.print_message(utility.fail, FAIL_RED + 'CheckWebShell NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
     """
 
-
     #===========================================================================
     # Ensure check the BattleAPI is working currently
     #===========================================================================
@@ -313,7 +303,6 @@ def judge_execution_attack(target_host_ip):
             score += json_data["point"]
         else:
             utility.print_message(utility.fail, FAIL_RED + 'CheckBattle NG(target: %s, score: %f, description: %s)' % (target, json_data["point"], json_data["description"]) + ENDC)
-        
 
     #===========================================================================
     # Ensure change the password of the user
@@ -332,6 +321,3 @@ def judge_execution_attack(target_host_ip):
 
     # Insert technical point to judge db.
     utility.insert_attack_judge_result_to_db(score / utility.point_max * 100)
-
-    # Get judge result of attack (technical point).
-    return get_judge_attack_result(utility)

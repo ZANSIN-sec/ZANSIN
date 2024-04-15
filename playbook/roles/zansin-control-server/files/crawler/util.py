@@ -39,7 +39,7 @@ NONE = 'none'     # No label.
 
 
 # Utility class.
-class Utilty:
+class Utility:
     def __init__(self, team_name, hostname, user_agent, sql=None):
         self.file_name = os.path.basename(__file__)
         self.full_path = os.path.dirname(os.path.abspath(__file__))
