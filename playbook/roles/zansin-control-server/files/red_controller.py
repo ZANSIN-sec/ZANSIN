@@ -94,12 +94,12 @@ def execute_judge(target_host_ip, leaner_name):
     display_score(judge_attack(target_host_ip), judge_crawler(leaner_name))
 
 
-def get_training_time(training_hours: int = 4) -> str:
-    if not isinstance(training_hours, int):
+def get_training_time(training_minutes: int = 240) -> str:
+    if not isinstance(training_minutes, int):
         raise Exception('The format of the training time is incorrect.')
 
     training_start_date = datetime.now()
-    training_end_date = training_start_date + timedelta(hours=training_hours)
+    training_end_date = training_start_date + timedelta(minutes=training_minutes)
     return training_start_date, training_end_date
 
 
@@ -130,7 +130,7 @@ if __name__ == '__main__':
             raise Exception('There are no available TCP ports on this server.')
 
         # Get training time.
-        start_time, end_time = get_training_time(int(config['Common']['training_hours']))
+        start_time, end_time = get_training_time(int(config['Common']['training_minutes']))
 
         # Define modules and arguments for threading.
         thread_crawler = threading.Thread(target=execute_crawler, args=(arg_leaner,
