@@ -16,6 +16,7 @@ import base64
 import ipaddress
 import threading
 import subprocess
+from judge.judge_controller import judge_execution_attack
 from .util import Utility
 from .poc.zansinapp_atk_upload_php import AtkUploadPHP
 from .poc.zansinapp_atk_docker_api import AtkDockerApi
@@ -119,6 +120,12 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         ratio = 60
         
     show_banner(utility)
+
+    def judge(wait):
+        time.sleep(wait * ratio)
+        utility.print_message(OK, wrap_text(OK, "%s:Judge" % (utility.get_current_date())))
+        judge_execution_attack(target)
+        return True
 
     def nmap(wait):
         time.sleep(wait * ratio)
