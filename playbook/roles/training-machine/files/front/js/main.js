@@ -489,7 +489,7 @@ WebFont.load (
             startTxt.interactive = false;
             openingContainer.addChild(startTxt);
 
-            copyrightTxt = createIntMessage('🄫 MINI Hardening',app.screen.width / 2, app.screen.height / 10 * 9);
+            copyrightTxt = createIntMessage('ZANSIN Project',app.screen.width / 2, app.screen.height / 10 * 9);
             copyrightTxt.name = 'copyright';
             copyrightTxt.alpha = 0;
             copyrightTxt.anchor.set(0.5);
