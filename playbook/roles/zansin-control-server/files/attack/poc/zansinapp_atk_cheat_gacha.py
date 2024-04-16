@@ -9,6 +9,8 @@ import string
 import json
 from os import urandom
 
+debug = False
+
 #proxy
 #proxies = {"http": "http://127.0.0.1:8080","https": "http://127.0.0.1:8080"}
 proxies = {"http": None,"https": None}
@@ -107,11 +109,13 @@ def main():
                 sr_count += 1
 
         except requests.HTTPError as e:
-            print(f'HTTP error: {e}')
+            if debug:
+                print(f'HTTP error: {e}')
             continue
 
         except Exception as e:
-            print(f'Unknown error: {e}')
+            if debug:
+                print(f'Unknown error: {e}')
             continue
 
 
