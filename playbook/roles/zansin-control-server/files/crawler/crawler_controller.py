@@ -51,32 +51,62 @@ def is_valid_training_time(start_time, end_time):
     return True if start_time <= end_time else False
 
 
+def judge_cheat_users(utility):
+    # Judgement of cheat users.
+    count_cheat_user_in_ranking = 0
+    cheat_reason = ''
+
+    try:
+        # Helper function to filter and count cheat users.
+        def count_and_document_cheat_users(response, condition=lambda d: True, message='cheat users'):
+            if response is None:
+                return 0
+            cheat_users = {d['nick_name'] for d in response if condition(d)}
+            cheat_count = len(cheat_users)
+            if cheat_count:
+                utility.print_message(NOTE, f'The number of {message}: {cheat_count}')
+                return cheat_count
+            return 0
+
+        # Check level cheats.
+        response, _, _ = utility.get_ranking(utility.create_http_session())
+        level_cheat_condition = lambda d: (
+                d['level'] == utility.level_cheat_level and
+                d['stamina'] == utility.level_cheat_stamina and
+                d['weapon_id'] == utility.level_cheat_weapon_id and d['armor_id'] == utility.level_cheat_armor_id and
+                d['gold'] == utility.level_cheat_gold and
+                d['exp'] == utility.level_cheat_exp
+        )
+        count_cheat_user_in_ranking += count_and_document_cheat_users(response,
+                                                                      condition=level_cheat_condition,
+                                                                      message='level cheat users')
+
+        # Check gatya cheats.
+        # response = utility.get_ranking(utility.create_http_session(), sort='weapon')
+        # gatya_cheat_condition = lambda d: d['level'] == 1
+        # count_cheat_user_in_ranking += count_and_document_cheat_users(response,
+        #                                                               condition=gatya_cheat_condition,
+        #                                                               message='gatya cheat users')
+
+        # Construct the cheat reason message
+        if count_cheat_user_in_ranking:
+            cheat_reason = 'Level and/or Gatya cheating occurred.'
+
+        # Judge cheat
+        is_cheat = count_cheat_user_in_ranking != 0
+        return is_cheat, cheat_reason
+    except Exception as e:
+        time.sleep(10)
+        utility.print_message(FAIL, f'Could not compute cheat user number: {e.args}.')
+        return False, f'Error occurred: {e.args[0]}'
+
+
 # Execute crawling of Game.
 def play_game(utility, learner_name, start_time, end_time):
-    # Get all existing player's data from local db.
-    player_list = []
-    try:
-        players = utility.get_all_players()
-        for player_data in players:
-            # Execute Login using credential in the DB.
-            session = utility.create_http_session()
-            session_id = utility.user_login(session, player_data['user_id'], player_data['password'])
-            if session_id is None:
-                # Inactive player that could not login.
-                utility.print_message(WARNING, f'Player \"{player_data["user_id"]}\" is not active.')
-                utility.update_user_status(player_data['user_id'])
-                continue
-            else:
-                # Add active player to the player's list.
-                exist_player = Player(utility, session, session_id, existing_player_data=player_data)
-                player_list.append(exist_player)
-    except Exception as e:
-        utility.print_message(FAIL, f'Could not get player list from local db: {e.args}')
+    # Initialize.
+    player_list, epochs, now_date = [], 1, datetime.now()
 
     # Execute crawling.
-    player = None
-    epochs = 1
-    now_date = datetime.now()
     while now_date < end_time:
         now_date = datetime.now()
         if now_date < start_time:
@@ -123,40 +153,8 @@ def play_game(utility, learner_name, start_time, end_time):
             # Skip game.
             utility.print_message(NOTE, 'Skip playing game because of cheating that occurred in the previous epoch.')
 
-        # Judgement of cheat users.
-        count_cheat_user_in_ranking = 0
-        nick_names_in_crawler = [player.nick_name for player in player_list]
-
-        # Check cheat: If there are high level users in the level ranking that has not been registered by the crawler.
-        is_cheat = False
-        cheat_reason = ''
-        try:
-            response, _, _ = utility.get_ranking(utility.create_http_session())
-            if response is not None:
-                level_ranking_user_names_out_of_crawler = set()
-                level_ranking_user_names_out_of_crawler.update(
-                    [d['nick_name'] for d in response if d['nick_name'] not in nick_names_in_crawler])
-                count_cheat_user_in_ranking += len(level_ranking_user_names_out_of_crawler)
-                utility.print_message(NOTE, f'The number of level cheat users: {len(level_ranking_user_names_out_of_crawler)}')
-                cheat_reason = 'Level cheating occurred. ' if len(level_ranking_user_names_out_of_crawler) != 0 else ''
-
-            # Consider level-1 users created not by the crawler in the weapon ranking as cheaters
-            response, _, _ = utility.get_ranking(utility.create_http_session(), sort='weapon')
-            if response is not None:
-                weapon_ranking_user_names_out_of_crawler = set()
-                weapon_ranking_user_names_out_of_crawler.update(
-                    [d['nick_name']
-                     for d in response
-                     if d['level'] == 1 and d['nick_name'] not in nick_names_in_crawler])
-                count_cheat_user_in_ranking += len(weapon_ranking_user_names_out_of_crawler)
-                utility.print_message(NOTE, f'The number of gatya cheat users: {len(weapon_ranking_user_names_out_of_crawler)}')
-                cheat_reason += 'Gatya cheat occurred.' if len(weapon_ranking_user_names_out_of_crawler) != 0 else ''
-
-            # Judge cheat.
-            is_cheat = True if count_cheat_user_in_ranking != 0 else False
-        except Exception as e:
-            time.sleep(10)
-            utility.print_message(FAIL, f'Could not compute cheat user number: {e.args}.')
+        # Judge cheat users.
+        is_cheat, cheat_reason = judge_cheat_users(utility)
 
         # End game for 1 epoch.
         is_playing_game_disable = False
