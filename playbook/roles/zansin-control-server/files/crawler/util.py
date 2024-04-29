@@ -86,7 +86,6 @@ class Utility:
             self.standard_stamina = float(config['Common']['standard_stamina'])
             self.max_injustice_num = int(config['Common']['max_injustice_num'])
             self.penalty_time_coef = int(config['Common']['penalty_time_coef'])
-            self.cheat_penalty_time_coef = int(config['Common']['cheat_penalty_time_coef'])
             self.max_stamina_loop_num = int(config['Common']['max_stamina_loop'])
             self.max_course_loop_num = int(config['Common']['max_course_loop'])
             self.max_battle_loop_num = int(config['Common']['max_battle_loop'])
@@ -103,6 +102,15 @@ class Utility:
             else:
                 self.print_message(WARNING, 'Invalid Gatya rate {}. Forcibly set 5 (20%).'.format(self.gatya_rate))
                 self.gatya_rate = 5
+
+            # Cheat.
+            self.cheat_penalty_time_coef = int(config['Cheat']['cheat_penalty_time_coef'])
+            self.level_cheat_level = int(config['Cheat']['level_cheat_level'])
+            self.level_cheat_stamina = int(config['Cheat']['level_cheat_stamina'])
+            self.level_cheat_weapon_id = int(config['Cheat']['level_cheat_weapon_id'])
+            self.level_cheat_armor_id = int(config['Cheat']['level_cheat_armor_id'])
+            self.level_cheat_gold = int(config['Cheat']['level_cheat_gold'])
+            self.level_cheat_exp = int(config['Cheat']['level_cheat_exp'])
 
             # API: Ranking information.
             self.api_ranking_method = config['API_Ranking']['method']
@@ -314,37 +322,6 @@ class Utility:
             result += str(ord(c))
 
         return int(result)
-
-    # Get all player's data.
-    def get_all_players(self):
-        player_data = []
-        try:
-            cur = self.sql.select(self.sql.conn, self.sql.state_select, (1,))
-            results = cur.fetchall()
-            for result in results:
-                player_data.append({'id': result[0],
-                                    'user_id': result[4],
-                                    'password': result[5],
-                                    'charge': result[2],
-                                    'injustice_num': result[3],
-                                    'nickname': result[6],
-                                    'created_at': result[7],
-                                    'level': result[8],
-                                    'exp': result[9],
-                                    'gold': result[10],
-                                    'max_hp': result[11],
-                                    'max_stamina': result[12],
-                                    'max_str': result[13],
-                                    'need_exp': result[14],
-                                    'stamina': result[15],
-                                    'staminaupdated_at': result[16],
-                                    'weapon_id': result[17],
-                                    'armor_id': result[18]})
-        except Exception as e:
-            self.print_exception(e, 'Could not read the all player\'s data from Database.')
-            player_data = []
-
-        return player_data
 
     # Get injustice number each player.
     def get_injustice_num(self, query):
