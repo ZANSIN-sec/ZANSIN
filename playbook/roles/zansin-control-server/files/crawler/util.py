@@ -111,6 +111,11 @@ class Utility:
             self.level_cheat_armor_id = int(config['Cheat']['level_cheat_armor_id'])
             self.level_cheat_gold = int(config['Cheat']['level_cheat_gold'])
             self.level_cheat_exp = int(config['Cheat']['level_cheat_exp'])
+            self.battle_cheat_exp = int(config['Cheat']['battle_cheat_exp'])
+            self.gatya_cheat_gold = int(config['Cheat']['gatya_cheat_gold'])
+            self.gatya_cheat_level = int(config['Cheat']['gatya_cheat_level'])
+            self.gatya_cheat_weapon_id = [int(w_id) for w_id in config['Cheat']['gatya_cheat_weapon_id'].split('@')]
+            self.gatya_cheat_armor_id = [int(a_id) for a_id in config['Cheat']['gatya_cheat_armor_id'].split('@')]
 
             # API: Ranking information.
             self.api_ranking_method = config['API_Ranking']['method']
@@ -651,6 +656,8 @@ class Utility:
             url = self.api_ranking_url + '?sort=4'
         elif sort == 'weapon':
             url = self.api_ranking_url + '?sort=5'
+        elif sort == 'armor':
+            url = self.api_ranking_url + '?sort=6'
         else:
             url = self.api_ranking_url 
 
