@@ -51,10 +51,11 @@ def is_valid_training_time(start_time, end_time):
     return True if start_time <= end_time else False
 
 
-def judge_cheat_users(utility):
+def judge_cheat_users(utility, player_list):
     # Judgement of cheat users.
     count_cheat_user_in_ranking = 0
     cheat_reason = ''
+    nick_names_in_crawler = [player.nick_name for player in player_list]
 
     try:
         # Helper function to filter and count cheat users.
@@ -81,20 +82,47 @@ def judge_cheat_users(utility):
                                                                       condition=level_cheat_condition,
                                                                       message='level cheat users')
 
-        # Check gatya cheats.
-        # response = utility.get_ranking(utility.create_http_session(), sort='weapon')
-        # gatya_cheat_condition = lambda d: d['level'] == 1
-        # count_cheat_user_in_ranking += count_and_document_cheat_users(response,
-        #                                                               condition=gatya_cheat_condition,
-        #                                                               message='gatya cheat users')
+        # Check battle cheats.
+        response, _, _ = utility.get_ranking(utility.create_http_session(), sort='exp')
+        battle_cheat_condition = lambda d: (
+                d['nick_name'] not in nick_names_in_crawler and
+                d['exp'] == utility.battle_cheat_exp
+        )
+        count_cheat_user_in_ranking += count_and_document_cheat_users(response,
+                                                                      condition=battle_cheat_condition,
+                                                                      message='battle cheat users')
+
+        # Check gatya (weapon) cheats.
+        response, _, _ = utility.get_ranking(utility.create_http_session(), sort='weapon')
+        gatya_weapon_cheat_condition = lambda d: (
+                d['nick_name'] not in nick_names_in_crawler and
+                d['gold'] == utility.gatya_cheat_gold and
+                d['level'] == utility.gatya_cheat_level and
+                d['weapon_id'] in utility.gatya_cheat_weapon_id
+        )
+        count_cheat_user_in_ranking += count_and_document_cheat_users(response,
+                                                                      condition=gatya_weapon_cheat_condition,
+                                                                      message='gatya (weapon) cheat users')
+
+        # Check gatya (armor) cheats.
+        response, _, _ = utility.get_ranking(utility.create_http_session(), sort='armor')
+        gatya_armor_cheat_condition = lambda d: (
+                d['nick_name'] not in nick_names_in_crawler and
+                d['gold'] == utility.gatya_cheat_gold and
+                d['level'] == utility.gatya_cheat_level and
+                d['armor_id'] in utility.gatya_cheat_armor_id
+        )
+        count_cheat_user_in_ranking += count_and_document_cheat_users(response,
+                                                                      condition=gatya_armor_cheat_condition,
+                                                                      message='gatya (armor) cheat users')
 
         # Construct the cheat reason message
         if count_cheat_user_in_ranking:
-            cheat_reason = 'Level and/or Gatya cheating occurred.'
+            cheat_reason = 'All or any of the level cheating, battle cheating, and gacha cheating.'
 
         # Judge cheat
         is_cheat = count_cheat_user_in_ranking != 0
-        return is_cheat, cheat_reason
+        return is_cheat, cheat_reason, count_cheat_user_in_ranking
     except Exception as e:
         time.sleep(10)
         utility.print_message(FAIL, f'Could not compute cheat user number: {e.args}.')
@@ -154,7 +182,7 @@ def play_game(utility, learner_name, start_time, end_time):
             utility.print_message(NOTE, 'Skip playing game because of cheating that occurred in the previous epoch.')
 
         # Judge cheat users.
-        is_cheat, cheat_reason = judge_cheat_users(utility)
+        is_cheat, cheat_reason, cheat_user_count = judge_cheat_users(utility, player_list)
 
         # End game for 1 epoch.
         is_playing_game_disable = False
@@ -198,6 +226,7 @@ def play_game(utility, learner_name, start_time, end_time):
         # Waiting per epoch.
         utility.print_message(OK, f'{waiting_time}[s] waiting.')
         utility.print_message(NOTE, f'Epoch {epochs}: Player num={len(player_list)}, Earned charge={charge_amount_per_epoch}.')
+        utility.print_message(NOTE, f'Cheat users num={cheat_user_count}, Note={cheat_reason}')
         utility.print_message(NOTE, f'Epoch {epochs}: {learner_name} End Game!!')
         time.sleep(waiting_time / utility.loop_delay_rate)
         epochs += 1
