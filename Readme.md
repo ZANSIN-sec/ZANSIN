@@ -25,9 +25,9 @@ This comprehensive approach allows learners to actively apply security measures,
 - [Exercise - MINI QUEST](./documents/MINIQUEST.md)
 - [Start Exercise](./documents/Usage.md)
 
-## Excesise Explanation
+## Exercise Explanation
 
-- [Excesise Explanation](./documents/ExcesiseExplanation.md)
+- [Exercise Explanation](./documents/ExerciseExplanation.md)
 
 ## Cite This Work
 
