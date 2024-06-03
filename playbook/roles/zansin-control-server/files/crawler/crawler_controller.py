@@ -126,7 +126,7 @@ def judge_cheat_users(utility, player_list):
     except Exception as e:
         time.sleep(10)
         utility.print_message(FAIL, f'Could not compute cheat user number: {e.args}.')
-        return False, f'Error occurred: {e.args[0]}'
+        return False, f'Error occurred: {e.args[0]}', 0
 
 
 # Execute crawling of Game.
