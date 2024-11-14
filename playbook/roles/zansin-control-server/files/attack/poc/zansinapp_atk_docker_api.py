@@ -50,7 +50,7 @@ class AtkDockerApi(object):
             print(response2.text)
 
             # make container image
-            json_data = { "Image": "alpine", "Cmd": ["/bin/sh"], "Tty":True, "Mounts": [{"Type": "bind", "Source": "/", "Target": "/mnt", "Driver": "local", "Mode": "", "RW": True, "Propagation": "" }]}
+            json_data = { "Image": "alpine", "Cmd": ["/bin/sh"], "Tty":True, "HostConfig": { "Binds": ["/:/mnt:rw"] } }
             headers = { "Content-Type": "application/json" }
 
             target_url3 = "http://" + targethost + "/containers/create"
