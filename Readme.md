@@ -31,4 +31,18 @@ This comprehensive approach allows learners to actively apply security measures,
 
 ## Cite This Work
 
-Details on how to cite ZANSIN in your academic and professional works will be provided after our official release.
+If you use ZANSIN in your research or professional work, please cite it as follows.
+
+```bibtex
+@software{zansin,
+  author  = {ZANSIN},
+  title   = {ZANSIN},
+  url     = {https://github.com/ZANSIN-sec/ZANSIN},
+  year    = {2026},
+  license = {MIT}
+}
+```
+
+## License
+
+ZANSIN is released under the [MIT License](LICENSE).
